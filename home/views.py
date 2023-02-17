@@ -3,7 +3,7 @@ from django.contrib.auth.forms import UserCreationForm
 from .forms import CreateUserForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from .decorators import unauthenticateduser
+from .decorators import unauthenticateduser,allowed_users
 # Create your views here.
 
 
@@ -16,19 +16,19 @@ def rolls(request):
 
 # Supplier
 
-
+@allowed_users(allowed_roles=['supplier'])
 def supplier_home(request):
     return render(request, 'supplier_home.html')
 
 # Manufacturer
 
-
+@allowed_users(allowed_roles=['manufacturer'])
 def manufacturer_home(request):
     return render(request, 'manufacturer_home.html')
 
 # Retailer
 
-
+@allowed_users(allowed_roles=['retailer'])
 def retailer_home(request):
     return render(request, 'retailer_home.html')
 
@@ -40,6 +40,7 @@ def admin_home(request):
     return render(request, 'admin.html')
 
 @unauthenticateduser
+@allowed_users(allowed_roles=['admin'])
 def admin_signup(request):
     form = CreateUserForm()
     print(request.POST)
