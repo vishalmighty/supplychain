@@ -39,25 +39,22 @@ def retailer_home(request):
 def admin_home(request):
     return render(request, 'admin.html')
 
-
+@unauthenticateduser
 def admin_signup(request):
-    if (request.user.is_authenticated):
-        return redirect('admin_home')
-    else:
-        form = CreateUserForm()
-        print(request.POST)
-        if request.method == 'POST':
-            form = CreateUserForm(request.POST)
-            if form.is_valid():
-                form.save()
-                return redirect('admin_login')
-            else:
-                print(form.errors)
-                print("ERROR not valid form")
+    form = CreateUserForm()
+    print(request.POST)
+    if request.method == 'POST':
+        form = CreateUserForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('admin_login')
         else:
-            print("ERROR")
-        context = {'form': form}
-        return render(request, 'admin_signup', context)
+            print(form.errors)
+            print("ERROR not valid form")
+    else:
+        print("ERROR")
+    context = {'form': form}
+    return render(request, 'admin_signup', context)
 
 
 @unauthenticateduser
