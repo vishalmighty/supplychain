@@ -1,0 +1,77 @@
+.parent {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin-left: -18%;
+  }
+
+  .parent button {
+    /* background-color: #48abe0; */
+    color: white;
+    border: none;
+    padding: 5px;
+    font-size: 31px;
+    height: 330px;
+    width: 330px;
+    box-shadow: 0 2px 4px darkslategray;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-bottom: 30px;
+  }
+
+  .parent button:active {
+    background-color: #48abe0;
+    box-shadow: 0 0 2px darkslategray;
+    transform: translateY(2px);
+  }
+
+  /* .parent button:not(:first-child) {
+    margin-left: 10px;
+  } */
+
+  .round {
+    border-radius: 70%;
+  }
+
+  .glow-button{
+    color: rgba(255, 255, 255, 0.8);
+    background: rgb(145, 92, 182);
+
+
+    /* transition: all 0.2s ease-in-out; */
+  }
+
+  .glow-button:hover {
+    color: rgba(0, 0, 0, 1);
+    box-shadow: 0 5px 15px rgba(145, 92, 182, .4);
+  }
+
+  .button1{
+    background-image: url('../assets/supplier1.png');
+    background-repeat : no-repeat;
+    background-position:center center;
+    background-size: 220px;
+  }
+
+  .button2{
+    background-image: url('../assets/manufacturer2.png');
+    background-repeat : no-repeat;
+    background-position:center center;
+    background-size: 220px;
+  }
+  
+  .button3{
+    background-image: url('../assets/retailer1.png');
+    background-repeat : no-repeat;
+    background-position:center center;
+    background-size: 220px;
+
+  }
+  
+
+.container{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
