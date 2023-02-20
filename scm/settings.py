@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'home'
 ]
 
 MIDDLEWARE = [
@@ -77,7 +78,7 @@ if os.environ.get('DB_ENGINE') and os.environ.get('DB_ENGINE') == "mysql":
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
-            'NAME': os.getenv('DB_NAME', 'scm'),
+            'NAME': os.getenv('DB_NAME', 'scm_2'),
             'USER': os.getenv('DB_USERNAME','vishal'),
             'PASSWORD': os.getenv('DB_PASS', '1234'),
             'HOST': os.getenv('DB_HOST', 'localhost'),
@@ -141,3 +142,4 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+AUTH_USER_MODEL = "home.User" 

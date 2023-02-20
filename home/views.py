@@ -40,7 +40,6 @@ def admin_home(request):
     return render(request, 'admin.html')
 
 @unauthenticateduser
-@allowed_users(allowed_roles=['admin'])
 def admin_signup(request):
     form = CreateUserForm()
     print(request.POST)
