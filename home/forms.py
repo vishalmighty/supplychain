@@ -4,13 +4,6 @@ from django.contrib.auth.models import User
 from django import forms
 from django.contrib.auth import get_user_model
 
-# from .models import Order
-
-# class OrderForm(ModelForm):
-#     class Meta:
-#         model = Order
-#         fields = ['username','email']
-
 class CreateUserForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
         model = get_user_model()

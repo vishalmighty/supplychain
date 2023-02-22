@@ -8,7 +8,7 @@
 </head>
 <body>
     <!-- Admin form-->
-    <a href="{% url 'admin_logout' %}"><button>Logout</button></a>
+    <a href="{% url 'user_logout' %}"><button>Logout</button></a>
     Hello, {{request.user}}
     <form action="" method="POST">
         {% csrf_token %}
