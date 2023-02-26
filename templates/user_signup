@@ -13,6 +13,7 @@
 </head>
 
 <body>
+  {% load static %}
 
     <section class="vh-100" style="background-color: #eee;">
         <div class="container h-100">
@@ -32,7 +33,7 @@
                           <div class="form-outline flex-fill mb-0">
                             <!-- <input type="text" id="form3Example1c" class="form-control" /> -->
                             {{form.username}} <br>
-                            <label class="form-label" for="form3Example1c">Your Name</label>
+                            <label class="form-label" for="form3Example1c">Shop Name</label>
                           </div>
                         </div>
       
@@ -78,20 +79,21 @@
                           </label>
                         </div> -->
                         {{form.error}}
-                        <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
-                            <input type="submit" placeholder="Register">
+                        <div class="d-flex justify-content-center  mb-4"  style="margin-left: 0px;margin-right: 38%;">
+                          <input type="submit" placeholder="Register" value="Register" style="margin-right: 18%;">
                           <!-- <button type="submit" class="btn btn-primary btn-lg">Register</button> -->
                         </div>
-
-                     
-                        
+                        <div class="d-flex justify-content-center" style="margin-left: 0px;margin-right: 8%;">
+                          <label class="form-label" for="form3Example4cd">Already having an account ->  </label> &nbsp;&nbsp;
+                          <a href="{% url 'user_login' %}"><input type="button" placeholder="Login" value="Login"></a>
+                        </div>
                       
                       </form>
       
                     </div>
                     <div class="col-md-10 col-lg-6 col-xl-7 d-flex align-items-center order-1 order-lg-2">
       
-                      <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-registration/draw1.webp"
+                      <img src="{% static '/assets/login.gif' %}"
                         class="img-fluid" alt="Sample image">
       
                     </div>

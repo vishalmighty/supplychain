@@ -1,0 +1,157 @@
+{% include "layouts/importing_css_js.html" %}
+<header class="navbar pcoded-header navbar-expand-lg navbar-light">
+    <div class="m-header">
+        <a href="/" class="b-brand">
+            <div class="b-bg">
+                <img src="../../static/assets/images/logo-thumb.png" alt="Logo" width="30" height="24" class="d-inline-block align-text-top">
+            </div>
+            <span class="b-title">Infinity portal</span>
+        </a>
+    </div>
+    <a class="mobile-menu" id="mobile-header" href="javascript:">
+        <i class="feather icon-more-horizontal"></i>
+    </a>
+    <div class="collapse navbar-collapse">
+        <ul class="navbar-nav mr-auto">
+            <li>
+                <a class="btn" data-bs-toggle="offcanvas" href="#offcanvasExample" role="button" aria-controls="offcanvasExample">
+                    <i class="feather icon-align-justify"></i>
+                </a>
+            </li>
+            <li>
+                <a href="/" class="b-brand">
+                    <div class="">
+                        <img src="../../static/assets/images/logo-thumb.png" alt="Logo" width="30" height="24" class="d-inline-block align-text-top">
+                    </div>
+                    <span class="b-title">Infinity Portal</span>
+                </a>
+            </li>
+            <li>
+                <a href="/" class="dropdown-item nav-link"><i class="feather icon-user"></i>
+                Home</a></li>
+            
+ 
+            <!-- <li class="nav-item dropdown">
+                <a class="dropdown-toggle" href="javascript:" data-toggle="dropdown">Dropdown</a>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="javascript:">Action</a></li>
+                    <li><a class="dropdown-item" href="javascript:">Another action</a></li>
+                    <li><a class="dropdown-item" href="javascript:">Something else here</a></li>
+                </ul>
+            </li> -->
+            <!-- <li>
+                <form class="d-flex" action="/search" method="post">
+                    {% csrf_token %}
+                    <div class="input-group mb-3 w-100" style="margin-right:15px;">
+                        <input type="number" name="dashboard_id" min=0 class="form-control" placeholder="Search a Dashboard" aria-label="Enter Dashboard Id you want to search" style="width:200px">
+                    </div> 
+                    <div class="input-group mb-3" >
+                        <button class="btn btn-primary" type="submit"><i class="feather icon-search"></i></button>
+                    </div> 
+                  </form>
+            </li> -->
+        </ul>
+        <ul class="navbar-nav ml-auto">
+            
+            <li><a href="javascript:" class="full-screen" onclick="javascript:toggleFullScreen()"><i
+                class="feather icon-maximize"></i></a></li>
+            <li>
+                <div class="dropdown">
+                    <a id = "notifications-tab" class="dropdown-toggle" href="javascript:" data-toggle="dropdown"><i
+                            class="icon feather icon-bell"></i></a>
+
+                        <!--notification start -->
+
+                        <div id ="notifications-panel" class="dropdown-menu dropdown-menu-right notification" >
+                            <div class="noti-head">
+                                <h6 class="d-inline-block m-b-0"><b>Notifications</b></h6>
+                            </div>
+                            <ul class="noti-body">
+                                
+                                {% for alert in alerts %}
+                            
+                                <li class="notification" id ="notify {{alert.id}}" style = "background-color: #DBF9FC;" >
+                                    <div class="media">
+                                        
+                                        <img  class="img-radius" id = {{alert.id}} src="{{ ASSETS_ROOT }}/images/notification/notification.png"
+                                             alt="Generic placeholder image" >
+                                        
+                                        <div class="media-body">
+                                            <p><strong> <b>Dashboard {{alert.dashboard_id}}</b></strong><span class="n-time text-muted">
+                                                <i
+                                                    class="icon feather icon-clock m-r-10"></i>{{alert.time}}</span></p>
+                                            <p>{{alert.description}}</p>
+                                        </div>
+                                        
+                                    </div>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+
+
+                    <!-- Notification ends -->
+                </div>
+            </li>
+            <li>
+                <div class="dropdown drp-user">
+                    <a href="javascript:" class="dropdown-toggle" data-toggle="dropdown">
+                        <i class="icon feather icon-settings"></i>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right profile-notification">
+                        <div class="pro-head">
+                            <img src="{{ ASSETS_ROOT }}/images/user/avatar-1.jpg" class="img-radius" alt="User-Profile-Image">
+                            <span>
+                                {{ request.user.username }}    
+                            </span>
+                            <a href="/auth-signin.html" class="dud-logout" title="Logout">
+                                <i class="feather icon-log-out"></i>
+                            </a>
+                        </div>
+                        <ul class="pro-body">
+                            <li><a href="/profile.html" class="dropdown-item"><i class="feather icon-user"></i>
+                                Profile</a></li>
+                            <li><a href="{% url 'user_logout' %}" class="dropdown-item">
+                                <i class="feather icon-lock"></i> Logout</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</header>
+
+<script>
+    
+    var colors = ['white','#DBF9FC'];
+    
+    {% for alert in alerts %}
+        var colorIndex_{{alert.id}} = 0;
+        document.getElementById("notify {{alert.id}}").addEventListener("click",function(){
+            
+            var col = document.getElementById("notify {{alert.id}}");
+
+            col.style.background = colors[colorIndex_{{alert.id}}];
+
+            if( colorIndex_{{alert.id}} == 1 ) {
+                colorIndex_{{alert.id}} = 0;
+            }
+            
+            
+        });
+    {% endfor %}
+   
+    
+    tab = document.getElementById("notifications-tab");
+    tab.addEventListener("click", function(event) {
+    event.preventDefault();
+     notificationsPanel = document.getElementById("notifications-panel");
+    if (notificationsPanel.style.display === "block") {
+        notificationsPanel.style.display = "none";
+    } else {
+        notificationsPanel.style.display = "block";
+    }
+    });
+
+</script>

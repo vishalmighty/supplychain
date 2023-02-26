@@ -4,9 +4,20 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Retailer</title>
+    <title>Retailer home</title>
 </head>
 <body>
-    Retailer_home
+    <!-- Admin form-->
+    <h1>Retailer</h1>
+    <a href="{% url 'user_logout' %}"><button>Logout</button></a> &nbsp;
+    Hello, {{request.user}}
+    <form action="" method="POST">
+        {% csrf_token %}
+        {% for field in form%}
+        {{field}}
+
+        {% endfor %}
+    </form>
+    
 </body>
 </html>

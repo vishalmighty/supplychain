@@ -21,6 +21,10 @@ def rolls(request):
 def supplier_home(request):
     return render(request, 'supplier_home.html')
 
+@allowed_users(allowed_roles=['SUPPLIER'])
+def supplier_profile(request):
+    return render(request, 'supplier_profile.html')
+
 # Manufacturer
 
 @allowed_users(allowed_roles=['MANUFACTURER'])
