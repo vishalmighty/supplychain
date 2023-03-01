@@ -15,10 +15,11 @@ class User(AbstractUser):
 
 class SupplierDetails(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    phone_number = models.BigIntegerField(blank=True, null=True)
-    contact_person = models.CharField(max_length=20, blank=True)
-    quality_score = models.BigIntegerField(blank=True, null=True)
-    gst_number = models.BigIntegerField(blank=True, null=True)
+    phone_number = models.CharField(max_length=30,blank=True,null=True)
+    contact_person = models.CharField(max_length=30, blank=True,null=True)
+    quality_score = models.CharField(max_length=30,blank=True,null=True)
+    gst_number = models.CharField(max_length=30,blank=True,null=True)
+    address = models.CharField(max_length=30,blank=True,null=True)
     
 
 class SupplierProduct(models.Model):

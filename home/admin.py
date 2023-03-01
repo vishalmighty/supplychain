@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
-from .models import User
+from .models import User,SupplierDetails
 
 class CustomUserCreationForm(UserCreationForm):
     class Meta:
@@ -31,5 +31,12 @@ class CustomUserAdmin(UserAdmin):
             'fields': ('username', 'email', 'role', 'password1', 'password2', 'is_staff', 'is_superuser', 'groups'),
         }),
     )
-
 admin.site.register(User, CustomUserAdmin)
+
+#class for Supplier Details
+class SupplierDetailsAdmin(admin.ModelAdmin):
+    list_display = ('user', 'phone_number', 'contact_person', 'quality_score', 'gst_number','address')
+    search_fields = ('user__username', 'user__email', 'contact_person', 'gst_number','address')
+
+admin.site.register(SupplierDetails, SupplierDetailsAdmin)
+

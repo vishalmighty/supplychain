@@ -5,6 +5,9 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from .decorators import unauthenticateduser,allowed_users
 from django.contrib.auth.models import Group
+from .models import SupplierDetails
+from django.core.exceptions import ObjectDoesNotExist
+from django.contrib import messages
 # Create your views here.
 
 @unauthenticateduser
@@ -23,8 +26,54 @@ def supplier_home(request):
 
 @allowed_users(allowed_roles=['SUPPLIER'])
 def supplier_profile(request):
-    return render(request, 'supplier_profile.html')
-
+    #To check if supplier details already exist
+    user_details = 'disp_mode'
+    try:
+        supplier_profile = SupplierDetails.objects.get(user=request.user)
+        address = supplier_profile.address
+        contact_person = supplier_profile.contact_person
+        phone_number = supplier_profile.phone_number
+        gst_number = supplier_profile.gst_number
+        if request.method == 'POST':
+            if 'edit' in request.POST:
+                user_details = 'edit_mode'
+            elif 'submit' in request.POST:
+                supplier_profile.address = request.POST['address']
+                supplier_profile.contact_person = request.POST['contact_person']
+                supplier_profile.phone_number = request.POST['phone_number']
+                supplier_profile.gst_number = request.POST['gst_number']
+                supplier_profile.save()
+                address = supplier_profile.address
+                contact_person = supplier_profile.contact_person
+                phone_number = supplier_profile.phone_number
+                gst_number = supplier_profile.gst_number                
+                messages.success(request, 'Profile updated successfully!')
+                user_details = 'disp_mode'
+    except SupplierDetails.DoesNotExist:
+        if request.method == 'POST':
+            if 'submit' in request.POST:
+                supplier_profile = SupplierDetails(user=request.user,
+                                                   address=request.POST['address'],
+                                                   contact_person=request.POST['contact_person'],
+                                                   phone_number=request.POST['phone_number'],
+                                                   gst_number=request.POST['gst_number'])
+                supplier_profile.save()
+                messages.success(request, 'Profile created successfully!')
+                user_details = 'disp_mode'
+        else:
+            user_details = 'edit_mode'
+            address = ''
+            contact_person = ''
+            phone_number = ''
+            gst_number = ''
+    context = {
+        'user_details': user_details,
+        'address': address,
+        'contact_person': contact_person,
+        'phone_number': phone_number,
+        'gst_number': gst_number,
+    }
+    return render(request, 'supplier_profile.html', context)
 # Manufacturer
 
 @allowed_users(allowed_roles=['MANUFACTURER'])
