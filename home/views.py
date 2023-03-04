@@ -1,11 +1,11 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm
-from .forms import CreateUserForm
+from .forms import CreateUserForm, SupplierProductForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from .decorators import unauthenticateduser,allowed_users
 from django.contrib.auth.models import Group
-from .models import SupplierDetails
+from .models import SupplierDetails,SupplierProduct
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib import messages
 # Create your views here.
@@ -18,11 +18,17 @@ def index(request):
 def rolls(request):
     return render(request, 'rolls.html')
 
+
+
+
+
 # Supplier
 
 @allowed_users(allowed_roles=['SUPPLIER'])
 def supplier_home(request):
-    return render(request, 'supplier_home.html')
+    user_products = SupplierProduct.objects.filter(user=request.user)
+    context = {'user_products': user_products}
+    return render(request, 'supplier_home.html',context)
 
 @allowed_users(allowed_roles=['SUPPLIER'])
 def supplier_profile(request):
@@ -74,6 +80,22 @@ def supplier_profile(request):
         'gst_number': gst_number,
     }
     return render(request, 'supplier_profile.html', context)
+
+
+@allowed_users(allowed_roles=['SUPPLIER'])
+def add_product_supplier(request):
+    if request.method == 'POST':
+        form = SupplierProductForm(request.POST)
+        if form.is_valid():
+            product = form.save(commit=False)
+            product.user = request.user
+            product.save()
+            return redirect('supplier_home')
+    else:
+        form = SupplierProductForm()
+    return render(request, 'add_product_supplier.html', {'form': form})
+
+
 # Manufacturer
 
 @allowed_users(allowed_roles=['MANUFACTURER'])

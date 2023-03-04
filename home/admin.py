@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
-from .models import User,SupplierDetails
+from .models import User,SupplierDetails,SupplierProduct
 
 class CustomUserCreationForm(UserCreationForm):
     class Meta:
@@ -39,4 +39,7 @@ class SupplierDetailsAdmin(admin.ModelAdmin):
     search_fields = ('user__username', 'user__email', 'contact_person', 'gst_number','address')
 
 admin.site.register(SupplierDetails, SupplierDetailsAdmin)
+
+
+admin.site.register(SupplierProduct)
 

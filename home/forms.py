@@ -3,7 +3,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django import forms
 from django.contrib.auth import get_user_model
-
+from .models import SupplierProduct
 class CreateUserForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
         model = get_user_model()
@@ -20,3 +20,17 @@ class CreateUserForm(UserCreationForm):
 
         # for fieldname in ['username', 'password1', 'password2']:
         #     self.fields[fieldname].help_text = None
+
+class SupplierProductForm(forms.ModelForm):
+    class Meta:
+        model = SupplierProduct
+        fields = ['name', 'price', 'quality', 'quantity', 'type', 'is_available']
+        labels = {
+            'name': 'Name',
+            'price': 'Price',
+            'quality': 'Quality',
+            'quantity': 'Quantity',
+            'type': 'Type',
+            'is_available': 'Is Available',
+        }
+

@@ -4,8 +4,13 @@ from  home import views
 urlpatterns = [
     path('', views.index, name='home'),
     path('rolls',views.rolls,name='rolls'),
+
+    #supplier
     path('supplier_home',views.supplier_home,name='supplier_home'),
     path('supplier_profile',views.supplier_profile,name='supplier_profile'),
+    path('add_product_supplier',views.add_product_supplier,name='add_product_supplier'),
+
+    #manufacturer
     path('manufacturer_home',views.manufacturer_home,name='manufacturer_home'),
     path('retailer_home',views.retailer_home,name='retailer_home'),
 
