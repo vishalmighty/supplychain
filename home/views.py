@@ -8,6 +8,7 @@ from django.contrib.auth.models import Group
 from .models import SupplierDetails,SupplierProduct
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib import messages
+from itertools import chain
 # Create your views here.
 
 @unauthenticateduser
@@ -26,7 +27,10 @@ def rolls(request):
 
 @allowed_users(allowed_roles=['SUPPLIER'])
 def supplier_home(request):
-    user_products = SupplierProduct.objects.filter(user=request.user)
+    user_products = SupplierProduct.objects.filter(user=request.user).order_by('type')
+    type_list = sorted(set([p.type for p in user_products]))
+    # Combine products with the same type into a single list
+    user_products = list(chain.from_iterable([list(filter(lambda p: p.type == t, user_products)) for t in type_list]))
     context = {'user_products': user_products}
     return render(request, 'supplier_home.html',context)
 
@@ -58,11 +62,15 @@ def supplier_profile(request):
     except SupplierDetails.DoesNotExist:
         if request.method == 'POST':
             if 'submit' in request.POST:
+                address = request.POST['address']
+                contact_person = request.POST['contact_person']
+                phone_number = request.POST['phone_number']
+                gst_number = request.POST['gst_number']
                 supplier_profile = SupplierDetails(user=request.user,
-                                                   address=request.POST['address'],
-                                                   contact_person=request.POST['contact_person'],
-                                                   phone_number=request.POST['phone_number'],
-                                                   gst_number=request.POST['gst_number'])
+                                                   address= address,
+                                                   contact_person= contact_person,
+                                                   phone_number= phone_number,
+                                                   gst_number= gst_number)
                 supplier_profile.save()
                 messages.success(request, 'Profile created successfully!')
                 user_details = 'disp_mode'

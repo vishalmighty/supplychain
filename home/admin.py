@@ -41,5 +41,8 @@ class SupplierDetailsAdmin(admin.ModelAdmin):
 admin.site.register(SupplierDetails, SupplierDetailsAdmin)
 
 
-admin.site.register(SupplierProduct)
+class SupplierProductAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name', 'price', 'quality', 'quantity', 'type', 'is_available')
+
+admin.site.register(SupplierProduct,SupplierProductAdmin)
 
