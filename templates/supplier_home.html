@@ -52,7 +52,7 @@
             {% for product in type.list %}
             <div class="col-md-4">
               <div class="card mb-2">
-                <a href="#editModal{{ product.id }}" data-bs-toggle="modal" data-bs-target="#editModal{{ product.id }}"><span class="position-absolute top-0 end-0 mt-2 me-2" style="font-size: 2rem;">✏️</span></a>
+                <a href="{% url 'edit_product_supplier' product.id %}" data-bs-toggle="modal" data-bs-target="#editModal{{ product.id }}"><span class="position-absolute top-0 end-0 mt-2 me-2" style="font-size: 2rem;">✏️</span></a>
                 <!-- <a href="{% url 'delete_product_supplier' product.id %}" class="btn btn-danger position-absolute top-0 end-0 mt-2 me-5">Delete</a> -->
                 <a href="{% url 'delete_product_supplier' product.id %}" onclick="return confirmDelete();" class="btn btn-danger position-absolute top-0 end-0 mt-2 me-5">Delete</a>
                 <div class="card-body">

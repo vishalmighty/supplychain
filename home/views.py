@@ -35,18 +35,22 @@ def supplier_home(request):
     return render(request, 'supplier_home.html',context)
 
 @allowed_users(allowed_roles=['SUPPLIER'])
-def edit_product_supplier(request, pk):
-    product = get_object_or_404(SupplierProduct, pk=pk)
-    if request.method == 'POST':
-        form = SupplierProductForm(request.POST, instance=product)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Product updated successfully!')
-            return redirect('supplier_home')
-    else:
-        form = SupplierProductForm(instance=product)
-
-    return render(request, 'supplier/edit_product.html', {'form': form})
+def edit_product_supplier(request, product_id):
+    product = get_object_or_404(SupplierProduct, id=product_id)
+    if request.method == 'GET':
+        context = {
+            'product': product
+        }
+        return render(request, 'edit_product_supplier.html', context)
+    elif request.method == 'POST':
+        product.name = request.POST.get('name')
+        product.price = request.POST.get('price')
+        product.quality = request.POST.get('quality')
+        product.quantity = request.POST.get('quantity')
+        product.type = request.POST.get('type')
+        product.is_available = request.POST.get('is_available', False) == 'on'
+        product.save()
+        return redirect('supplier_home')
 
 @allowed_users(allowed_roles=['SUPPLIER'])
 def delete_product_supplier(request, product_id):
