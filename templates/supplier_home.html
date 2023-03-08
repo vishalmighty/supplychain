@@ -14,7 +14,23 @@
   min-height: 450px;
 }
 
+.card-link {
+  text-decoration: none;
+  color: #212529;
+}
+
 </style>
+
+<!-- Include the necessary Bootstrap JavaScript code -->
+<script>
+  function confirmDelete() {
+    if (confirm("Are you sure you want to delete this product?")) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  </script>
 <body>
     <div class="container border mt-2 overflow-auto">
         <div class="row" style="background-color: lightblue;">
@@ -34,22 +50,25 @@
           </div>
           <div class="row">
             {% for product in type.list %}
-              <div class="col-md-4">
-                <div class="card mb-2">
-                  <div class="card-body">
+            <div class="col-md-4">
+              <div class="card mb-2">
+                <a href="#editModal{{ product.id }}" data-bs-toggle="modal" data-bs-target="#editModal{{ product.id }}"><span class="position-absolute top-0 end-0 mt-2 me-2" style="font-size: 2rem;">✏️</span></a>
+                <!-- <a href="{% url 'delete_product_supplier' product.id %}" class="btn btn-danger position-absolute top-0 end-0 mt-2 me-5">Delete</a> -->
+                <a href="{% url 'delete_product_supplier' product.id %}" onclick="return confirmDelete();" class="btn btn-danger position-absolute top-0 end-0 mt-2 me-5">Delete</a>
+                <div class="card-body">
                     <h5 class="card-title">{{ product.name }}</h5>
                     <p class="card-text">Price: {{ product.price }}</p>
                     <p class="card-text">Quality: {{ product.quality }}</p>
                     <p class="card-text">Quantity: {{ product.quantity }}</p>
                     <p class="card-text">Type: {{ product.type }}</p>
                     {% if product.is_available %}
-                      <p class="card-text text-success">Available</p>
+                        <p class="card-text text-success">Available</p>
                     {% else %}
-                      <p class="card-text text-danger">Not available</p>
+                        <p class="card-text text-danger">Not available</p>
                     {% endif %}
-                  </div>
                 </div>
-              </div>
+            </div>  
+            </div>            
             {% endfor %}
           </div>
         {% endfor %}

@@ -9,6 +9,8 @@ urlpatterns = [
     path('supplier_home',views.supplier_home,name='supplier_home'),
     path('supplier_profile',views.supplier_profile,name='supplier_profile'),
     path('add_product_supplier',views.add_product_supplier,name='add_product_supplier'),
+    path('edit_product_supplier/<int:pk>/',views.edit_product_supplier,name='edit_product_supplier'),
+    path('delete_product_supplier/<int:product_id>/', views.delete_product_supplier, name='delete_product_supplier'),
 
     #manufacturer
     path('manufacturer_home',views.manufacturer_home,name='manufacturer_home'),

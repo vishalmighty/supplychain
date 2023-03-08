@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect,get_object_or_404
 from django.contrib.auth.forms import UserCreationForm
 from .forms import CreateUserForm, SupplierProductForm
 from django.contrib.auth import authenticate, login, logout
@@ -33,6 +33,26 @@ def supplier_home(request):
     user_products = list(chain.from_iterable([list(filter(lambda p: p.type == t, user_products)) for t in type_list]))
     context = {'user_products': user_products}
     return render(request, 'supplier_home.html',context)
+
+@allowed_users(allowed_roles=['SUPPLIER'])
+def edit_product_supplier(request, pk):
+    product = get_object_or_404(SupplierProduct, pk=pk)
+    if request.method == 'POST':
+        form = SupplierProductForm(request.POST, instance=product)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Product updated successfully!')
+            return redirect('supplier_home')
+    else:
+        form = SupplierProductForm(instance=product)
+
+    return render(request, 'supplier/edit_product.html', {'form': form})
+
+@allowed_users(allowed_roles=['SUPPLIER'])
+def delete_product_supplier(request, product_id):
+    product = SupplierProduct.objects.get(id=product_id)
+    product.delete()
+    return redirect('supplier_home')
 
 @allowed_users(allowed_roles=['SUPPLIER'])
 def supplier_profile(request):
