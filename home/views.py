@@ -134,6 +134,12 @@ def add_product_supplier(request):
 def manufacturer_home(request):
     return render(request, 'manufacturer_home.html')
 
+@allowed_users(allowed_roles=['MANUFACTURER'])
+def search_supplier(request):
+    query = request.GET.get('q')
+    suppliers = SupplierDetails.objects.filter(user__supplierproducts__name__icontains=query).order_by('-quality_score')
+    return render(request, 'search_supplier.html', {'suppliers': suppliers})
+
 # Retailer
 
 @allowed_users(allowed_roles=['RETAILER'])
