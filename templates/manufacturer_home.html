@@ -9,37 +9,38 @@
     <title>Supplier home</title>
 </head>
 <style>
-     .container {
-  max-height: 700px; /* adjust this value as needed */
-  min-height: 450px;
+    .container {
+ max-height: 700px; /* adjust this value as needed */
+ min-height: 450px;
 }
 
 .card-link {
-  text-decoration: none;
-  color: #212529;
+ text-decoration: none;
+ color: #212529;
 }
 
 .search-box {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
+ display: flex;
+ justify-content: flex-end; /* align items to the right */
+ align-items: center;
 }
 
 .search-box input[type="text"] {
-  padding: 8px;
-  border: none;
-  border-radius: 4px;
-  margin-right: 10px;
-  font-size: 16px;
+ padding: 8px;
+ border: none;
+ border-radius: 4px;
+ margin-right: 10px;
+ font-size: 16px;
+ flex: 1;
 }
 
 .search-box button {
-  padding: 8px 12px;
-  border: none;
-  border-radius: 4px;
-  background-color: #007bff;
-  color: #fff;
-  font-size: 16px;
+ padding: 8px 12px;
+ border: none;
+ border-radius: 4px;
+ background-color: #007bff;
+ color: #fff;
+ font-size: 16px;
 }
 
 </style>
@@ -47,14 +48,62 @@
 <body>
     <div class="container border mt-2 overflow-auto">
         <div class="row" style="background-color: lightcoral;">
-            <div class="col-md-10 d-flex justify-content-end align-items-center">
+            <div class="col-md-8 d-flex justify-content-end align-items-center">
               <h1 class="text-center mx-auto">Products available</h1>
             </div>
-            <div class="col-md-2 d-flex justify-content-end align-items-center search-box">
-            <input type="text" placeholder="Search products...">
-              <a href=""><button class="btn btn-primary">Search</button></a>
+            <div class="col-md-4 d-flex justify-content-end align-items-center ml-auto search-box mt-2">
+                <form method="GET" action="{% url 'search_supplier' %}">
+                    <input type="text" name="search_box" placeholder="Search products..." value="{{ request.GET.search_box }}">
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </form>
             </div>
           </div>
+          <div class="row mt-2">
+            <div class="col-md-12">
+                <table class="table table-hover">
+                        <thead>
+                          <tr>
+                            <th>Supplier Name</th>
+                            <th>Phone Number</th>
+                            <th>Contact Person</th>
+                            <th>Quality Score</th>
+                            <th>GST Number</th>
+                            <th>Address</th>
+                            <th>Product Name</th>
+                            <th>Price</th>
+                            <th>Quality</th>
+                            <th>Quantity</th>
+                            <th>Type</th>
+                            <th>Is Available</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {% for supplier_data in supplier_data %}
+                          {% for product in supplier_data.products %}
+                          <tr>
+                            {% if forloop.first %}
+                            <td rowspan="{{supplier_data.products.count}}">{{supplier_data.supplier.user.username}}</td>
+                            <td rowspan="{{supplier_data.products.count}}">{{supplier_data.supplier.phone_number}}</td>
+                            <td rowspan="{{supplier_data.products.count}}">{{supplier_data.supplier.contact_person}}</td>
+                            <td rowspan="{{supplier_data.products.count}}">{{supplier_data.supplier.quality_score}}</td>
+                            <td rowspan="{{supplier_data.products.count}}">{{supplier_data.supplier.gst_number}}</td>
+                            <td rowspan="{{supplier_data.products.count}}">{{supplier_data.supplier.address}}</td>
+                            {% endif %}
+                            <td>{{product.name}}</td>
+                            <td>{{product.price}}</td>
+                            <td>{{product.quality}}</td>
+                            <td>{{product.quantity}}</td>
+                            <td>{{product.get_type_display}}</td>
+                            <td>{% if product.is_available %}Available{% else %}Not Available{% endif %}</td>
+                          </tr>
+                          {% endfor %}
+                          {% endfor %}
+                        </tbody>
+                      </table>
+                      
+                  
+            </div>
+        </div>
       </div>
       
 </body>

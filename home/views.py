@@ -5,10 +5,12 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from .decorators import unauthenticateduser,allowed_users
 from django.contrib.auth.models import Group
-from .models import SupplierDetails,SupplierProduct
+from .models import SupplierDetails,SupplierProduct,User
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib import messages
 from itertools import chain
+from django.db.models import Q
+
 # Create your views here.
 
 @unauthenticateduser
@@ -136,9 +138,17 @@ def manufacturer_home(request):
 
 @allowed_users(allowed_roles=['MANUFACTURER'])
 def search_supplier(request):
-    query = request.GET.get('q')
-    suppliers = SupplierDetails.objects.filter(user__supplierproducts__name__icontains=query).order_by('-quality_score')
-    return render(request, 'search_supplier.html', {'suppliers': suppliers})
+    search_query = request.GET.get('search_box')
+    supplier_products = SupplierProduct.objects.filter(Q(name__icontains=search_query) | Q(type__icontains=search_query))
+    suppliers = SupplierDetails.objects.filter(user__supplierproducts__in=supplier_products)
+    supplier_data = []
+
+    for supplier in suppliers:
+        supplier_products = supplier.user.supplierproducts.filter(Q(name__icontains=search_query) | Q(type__icontains=search_query))
+        supplier_data.append({'supplier': supplier, 'products': supplier_products})
+
+    context = {'supplier_data': supplier_data}  
+    return render(request, 'manufacturer_home.html', context)
 
 # Retailer
 

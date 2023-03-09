@@ -14,8 +14,10 @@ urlpatterns = [
 
     #manufacturer
     path('manufacturer_home',views.manufacturer_home,name='manufacturer_home'),
-    path('retailer_home',views.retailer_home,name='retailer_home'),
+    path('search_supplier',views.search_supplier,name='search_supplier'),
 
+    #retailer
+    path('retailer_home',views.retailer_home,name='retailer_home'),
 
 
    
