@@ -8,6 +8,27 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   {% load static%}
   <link href='{% static "css/supplier_profile_styles.css" %}' rel="stylesheet" />
+  <style>
+    .badge {
+        position: absolute;
+        top: 0;
+        right: 0;
+        transform: translate(50%, -50%);
+    }
+    .badge-star {
+  display: inline-block;
+  padding: 20px 35px;
+  font-size: 14px;
+  line-height: 3;
+  text-align: center;
+  background-color: #ffcc00;
+  color: #fff;
+  border-radius: 0;
+  -webkit-clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+}
+
+</style>
 </head>
 <body>
   <!-- Supplier Details -->
@@ -25,6 +46,9 @@
             <button class="btn btn-secondary" type="submit" name="edit">Edit</button>
             {% else %}
             <button class="btn btn-secondary" type="submit" name="submit">Submit</button>
+            {% endif %}
+            {% if status %}
+            <span class="badge badge-star">{{status}}</span>
             {% endif %}
           </div>
           <div class="card-body">

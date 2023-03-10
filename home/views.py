@@ -70,6 +70,7 @@ def supplier_profile(request):
         contact_person = supplier_profile.contact_person
         phone_number = supplier_profile.phone_number
         gst_number = supplier_profile.gst_number
+        status = supplier_profile.status
         if request.method == 'POST':
             if 'edit' in request.POST:
                 user_details = 'edit_mode'
@@ -78,11 +79,13 @@ def supplier_profile(request):
                 supplier_profile.contact_person = request.POST['contact_person']
                 supplier_profile.phone_number = request.POST['phone_number']
                 supplier_profile.gst_number = request.POST['gst_number']
+                supplier_profile.status = 'pending'
                 supplier_profile.save()
                 address = supplier_profile.address
                 contact_person = supplier_profile.contact_person
                 phone_number = supplier_profile.phone_number
-                gst_number = supplier_profile.gst_number                
+                gst_number = supplier_profile.gst_number
+                status = supplier_profile.status                
                 messages.success(request, 'Profile updated successfully!')
                 user_details = 'disp_mode'
     except SupplierDetails.DoesNotExist:
@@ -96,7 +99,8 @@ def supplier_profile(request):
                                                    address= address,
                                                    contact_person= contact_person,
                                                    phone_number= phone_number,
-                                                   gst_number= gst_number)
+                                                   gst_number= gst_number,
+                                                   status='pending')
                 supplier_profile.save()
                 messages.success(request, 'Profile created successfully!')
                 user_details = 'disp_mode'
@@ -106,12 +110,14 @@ def supplier_profile(request):
             contact_person = ''
             phone_number = ''
             gst_number = ''
+            status = 'pending'
     context = {
         'user_details': user_details,
         'address': address,
         'contact_person': contact_person,
         'phone_number': phone_number,
         'gst_number': gst_number,
+        'status': status,
     }
     return render(request, 'supplier_profile.html', context)
 
@@ -159,9 +165,16 @@ def retailer_home(request):
 # Admin items
 
 
-@login_required(login_url='user_login') #put admin_login for admin
-def admin_home(request):
-    return render(request, 'admin.html')
+
+def supplier_admin(request):
+    # Get all suppliers with a status of "pending"
+    suppliers = SupplierDetails.objects.filter(status='pending')
+
+    context = {
+        'suppliers': suppliers
+    }
+
+    return render(request, 'supplier_admin.html', context)
 
 @unauthenticateduser
 def user_signup(request):

@@ -14,13 +14,22 @@ class User(AbstractUser):
     role = models.CharField(max_length=30, choices=ROLE_CHOICES)
 
 class SupplierDetails(models.Model):
+    PENDING = 'Pending'
+    REJECTED = 'Rejected'
+    APPROVED = 'Approved'
+    STATUS_CHOICES = [
+        (PENDING, 'Pending'),
+        (REJECTED, 'Rejected'),
+        (APPROVED, 'Approved'),
+    ]
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     phone_number = models.CharField(max_length=30,blank=True,null=True)
     contact_person = models.CharField(max_length=30, blank=True,null=True)
     quality_score = models.CharField(max_length=30,blank=True,null=True)
     gst_number = models.CharField(max_length=30,blank=True,null=True)
     address = models.CharField(max_length=30,blank=True,null=True)
-    
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default=PENDING)
+
 
 class SupplierProduct(models.Model):
     type_choices = (

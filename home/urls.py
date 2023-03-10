@@ -25,5 +25,5 @@ urlpatterns = [
     path('user_signup',views.user_signup,name='user_signup'),
     path('user_login',views.user_login,name='user_login'),
 
-     path('admin_home',views.admin_home,name='admin_home'),
+     path('supplier_admin',views.supplier_admin,name='admin_home'),
 ]
