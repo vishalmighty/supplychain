@@ -38,7 +38,7 @@
       <!-- Supplier Info Card -->
       <div class="col-md-6 mb-4">
         <div class="card">
-          <form method="post" action="/supplier_profile">
+          <form method="post" action="/supplier_profile" enctype="multipart/form-data">
             {% csrf_token %}
           <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
             <h5 class="card-title mb-0">Store Info</h5>
@@ -106,43 +106,22 @@
         </div>
       </div>
 
-      <!-- Product List Table -->
-      <div class="col-md-6 mb-4">
-        <div class="card">
-          <div class="card-header bg-success text-white d-flex justify-content-between align-items-cente">
-            <h5 class="card-title mb-0">Product List</h5>
-            <button class="btn btn-secondary" type="submit" name="add">Add Product</button>
-          </div>
-          <div class="card-body">
-            <table class="table table-striped">
-              <thead>
-                <tr>
-                  <th>Product</th>
-                  <th>Price</th>
-                  <th>In Stock</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Product 1</td>
-                  <td>$10.00</td>
-                  <td>10</td>
-                </tr>
-                <tr>
-                  <td>Product 2</td>
-                  <td>$15.00</td>
-                  <td>5</td>
-                </tr>
-                <tr>
-                  <td>Product 3</td>
-                  <td>$20.00</td>
-                  <td>0</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
+<!-- Profile pic card -->
+<div class="col-md-6 mb-4">
+  <div class="card">
+    <div class="card-header bg-primary text-white">
+      <h5 class="card-title mb-0">Profile Picture</h5>
+    </div>
+    <div class="card-body">
+      {% if user_details == 'disp_mode' %}
+      <img src="{{ profile_picture }}" alt="Profile Picture" class="img-fluid rounded-circle">
+      {% else %}
+      <input type="file" name="profile_picture" id="profile_picture" class="form-control" value="{{profile_picture}}">
+      {% endif %}
+    </div>
+  </div>
+</div>
+
     </div>
   </div>
 

@@ -29,6 +29,7 @@ class SupplierDetails(models.Model):
     gst_number = models.CharField(max_length=30,blank=True,null=True)
     address = models.CharField(max_length=30,blank=True,null=True)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default=PENDING)
+    profile_pic = models.ImageField(upload_to='profile_pics', default='default-avatar.png')
 
 
 class SupplierProduct(models.Model):

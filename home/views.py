@@ -71,6 +71,7 @@ def supplier_profile(request):
         phone_number = supplier_profile.phone_number
         gst_number = supplier_profile.gst_number
         status = supplier_profile.status
+        profile_picture = supplier_profile.profile_pic.url if supplier_profile.profile_pic else None
         if request.method == 'POST':
             if 'edit' in request.POST:
                 user_details = 'edit_mode'
@@ -80,12 +81,18 @@ def supplier_profile(request):
                 supplier_profile.phone_number = request.POST['phone_number']
                 supplier_profile.gst_number = request.POST['gst_number']
                 supplier_profile.status = 'pending'
+                # Get and validate the profile picture
+                profile_picture = request.FILES.get('profile_picture')
+                print(profile_picture)
+                if profile_picture:
+                    supplier_profile.profile_pic = profile_picture
                 supplier_profile.save()
                 address = supplier_profile.address
                 contact_person = supplier_profile.contact_person
                 phone_number = supplier_profile.phone_number
                 gst_number = supplier_profile.gst_number
                 status = supplier_profile.status                
+                profile_picture = supplier_profile.profile_pic.url if supplier_profile.profile_pic else None
                 messages.success(request, 'Profile updated successfully!')
                 user_details = 'disp_mode'
     except SupplierDetails.DoesNotExist:
@@ -95,12 +102,16 @@ def supplier_profile(request):
                 contact_person = request.POST['contact_person']
                 phone_number = request.POST['phone_number']
                 gst_number = request.POST['gst_number']
+                # Get and validate the profile picture
+                profile_picture = request.FILES.get('profile_picture')
                 supplier_profile = SupplierDetails(user=request.user,
                                                    address= address,
                                                    contact_person= contact_person,
                                                    phone_number= phone_number,
                                                    gst_number= gst_number,
                                                    status='pending')
+                if profile_picture:
+                    supplier_profile.profile_pic = profile_picture
                 supplier_profile.save()
                 messages.success(request, 'Profile created successfully!')
                 user_details = 'disp_mode'
@@ -111,6 +122,7 @@ def supplier_profile(request):
             phone_number = ''
             gst_number = ''
             status = 'pending'
+            profile_picture = None
     context = {
         'user_details': user_details,
         'address': address,
@@ -118,6 +130,7 @@ def supplier_profile(request):
         'phone_number': phone_number,
         'gst_number': gst_number,
         'status': status,
+        'profile_picture': profile_picture,
     }
     return render(request, 'supplier_profile.html', context)
 
