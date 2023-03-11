@@ -1,0 +1,55 @@
+{% include "layouts/importing_css_js.html" %}
+<div class="container border mt-2">
+    <div class="row" style="background-color: lightblue;">
+      <div class="col-md-10 d-flex justify-content-end align-items-center">
+        <h1 class="text-center mx-auto">{{ supplier.user.username }}</h1>
+      </div>
+      <div class="col-md-2 d-flex justify-content-end align-items-center">
+        <form method="post">
+          {% csrf_token %}
+          <div class="btn-group" role="group">
+            <button type="submit" class="btn btn-success margin-right:2px;" name="approve">Approve</button>
+            <button type="submit" class="btn btn-danger" name="reject">Reject</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="row mt-2">
+      <div class="col-md-4">
+        <img src="{{ supplier.profile_pic.url }}" alt="{{ supplier.user.username }}" class="img-fluid">
+      </div>
+      <div class="col-md-8">
+        <div class="card mb-2">
+          <div class="card-body">
+            <h5 class="card-title">Phone Number:</h5>
+            <p class="card-text">{{ supplier.phone_number }}</p>
+          </div>
+        </div>
+        <div class="card mb-2">
+          <div class="card-body">
+            <h5 class="card-title">Contact Person:</h5>
+            <p class="card-text">{{ supplier.contact_person }}</p>
+          </div>
+        </div>
+        <div class="card mb-2">
+          <div class="card-body">
+            <h5 class="card-title">Quality Score:</h5>
+            <p class="card-text">{{ supplier.quality_score }}</p>
+          </div>
+        </div>
+        <div class="card mb-2">
+          <div class="card-body">
+            <h5 class="card-title">GST Number:</h5>
+            <p class="card-text">{{ supplier.gst_number }}</p>
+          </div>
+        </div>
+        <div class="card mb-2">
+          <div class="card-body">
+            <h5 class="card-title">Address:</h5>
+            <p class="card-text">{{ supplier.address }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  

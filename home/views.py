@@ -71,6 +71,7 @@ def supplier_profile(request):
         phone_number = supplier_profile.phone_number
         gst_number = supplier_profile.gst_number
         status = supplier_profile.status
+        print(status)
         profile_picture = supplier_profile.profile_pic.url if supplier_profile.profile_pic else None
         if request.method == 'POST':
             if 'edit' in request.POST:
@@ -80,13 +81,15 @@ def supplier_profile(request):
                 supplier_profile.contact_person = request.POST['contact_person']
                 supplier_profile.phone_number = request.POST['phone_number']
                 supplier_profile.gst_number = request.POST['gst_number']
-                supplier_profile.status = 'pending'
+                supplier_profile.status = 'Pending' # give P in caps or will get error
+                print(supplier_profile.status)
                 # Get and validate the profile picture
                 profile_picture = request.FILES.get('profile_picture')
                 print(profile_picture)
                 if profile_picture:
                     supplier_profile.profile_pic = profile_picture
                 supplier_profile.save()
+                print(supplier_profile.status)
                 address = supplier_profile.address
                 contact_person = supplier_profile.contact_person
                 phone_number = supplier_profile.phone_number
@@ -109,7 +112,7 @@ def supplier_profile(request):
                                                    contact_person= contact_person,
                                                    phone_number= phone_number,
                                                    gst_number= gst_number,
-                                                   status='pending')
+                                                   status='Pending')
                 if profile_picture:
                     supplier_profile.profile_pic = profile_picture
                 supplier_profile.save()
@@ -121,7 +124,7 @@ def supplier_profile(request):
             contact_person = ''
             phone_number = ''
             gst_number = ''
-            status = 'pending'
+            status = 'Pending'
             profile_picture = None
     context = {
         'user_details': user_details,
@@ -181,13 +184,41 @@ def retailer_home(request):
 
 def supplier_admin(request):
     # Get all suppliers with a status of "pending"
-    suppliers = SupplierDetails.objects.filter(status='pending')
+    # if not request.user.is_superuser:
+    #     return redirect('home')
+    suppliers = SupplierDetails.objects.all() 
+    print(suppliers)
 
     context = {
         'suppliers': suppliers
     }
 
     return render(request, 'supplier_admin.html', context)
+
+# @login_required
+def supplier_details(request, supplier_id):
+    # if not request.user.is_superuser:
+    #     return redirect('home')
+    print(supplier_id)
+    supplier = get_object_or_404(SupplierDetails, id=supplier_id)
+
+    if request.method == 'POST':
+        if 'approve' in request.POST:
+            supplier.status = 'Approved'
+            supplier.save()
+            # send email to supplier notifying them of approval
+            return redirect('/supplier_admin')
+        elif 'reject' in request.POST:
+            supplier.status = 'Rejected'
+            supplier.save()
+            # send email to supplier notifying them of rejection
+            return redirect('/supplier_admin')
+
+    context = {
+        'supplier': supplier
+    }
+
+    return render(request, 'supplier_details.html', context)
 
 @unauthenticateduser
 def user_signup(request):

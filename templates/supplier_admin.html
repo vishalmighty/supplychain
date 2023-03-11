@@ -18,33 +18,85 @@
   text-decoration: none;
   color: #212529;
 }
+.subtitle {
+        text-align: center;
+        font-weight: bold;
+        font-size: 1.2rem;
+        margin-top: 1rem;
+    }
+    .supplier-card {
+        margin-bottom: 0.2rem;
+        background-color: #fff;
+        border: 1px solid rgba(0, 0, 0, 0.125);
+        border-radius: 0.25rem;
+        padding: 0.35rem;
+     }
 
+     .supplier-card[data-status="Approved"] {
+        background-color: #c3e6cb;
+     }
+
+     .supplier-card[data-status="Rejected"] {
+        background-color: #f5c6cb;
+     }
 </style>
 <body>
     <div class="container border mt-2 overflow-auto">
         <div class="row" style="background-color: lightblue;">
-            <div class="col-md-10 d-flex justify-content-end align-items-center">
+            <div class="col-md-12 d-flex justify-content-end align-items-center">
               <h1 class="text-center mx-auto">Request for details verification</h1>
-            </div>
-            <div class="col-md-2 d-flex justify-content-end align-items-center">
-              <a href="add_product_supplier"><button class="btn btn-primary">Add</button></a>
             </div>
           </div>
           <div class="row mt-2">
             <div class="col-md-12">
+                <button class="btn btn-primary mb-2" id="btn-pending">Pending</button>
+                <button class="btn btn-success mb-2" id="btn-approved">Approved</button>
+                <button class="btn btn-danger mb-2" id="btn-rejected">Rejected</button>
+                <div class="subtitle" id="status-subtitle"></div>
                 {% for supplier in suppliers %}
-                    {% if supplier.status == 'pending' %}
-                        <div class="card mb-2">
-                            <div class="card-body d-flex justify-content-between align-items-center">
-                                <span>{{ supplier.user.username }}</span>
-                                <button class="btn btn-success">Investigate</button>
-                            </div>
+                    <div class="card mb-2 supplier-card" data-status="{{ supplier.status }}">
+                        <div class="card-body d-flex justify-content-between align-items-center">
+                            <span>{{ supplier.user.username }}</span>
+                            <a href="{% url 'supplier_details' supplier.id %}" class="card-link btn btn-info">Investigate</a>
                         </div>
-                    {% endif %}
+                    </div>
                 {% endfor %}
             </div>
         </div>
-      </div>
+    </div>
+    <script>
+      const btnPending = document.querySelector("#btn-pending");
+      const btnApproved = document.querySelector("#btn-approved");
+      const btnRejected = document.querySelector("#btn-rejected");
+      const supplierCards = document.querySelectorAll(".supplier-card");
+      const statusSubtitle = document.querySelector("#status-subtitle");
+      filterCards("Pending");
+      statusSubtitle.textContent = "Pending";
+      btnPending.addEventListener("click", () => {
+          filterCards("Pending");
+          statusSubtitle.textContent = "Pending";
+      });
+
+      btnApproved.addEventListener("click", () => {
+          filterCards("Approved");
+          statusSubtitle.textContent = "Approved";
+      });
+
+      btnRejected.addEventListener("click", () => {
+          filterCards("Rejected");
+          statusSubtitle.textContent = "Rejected";
+      });
+
+      function filterCards(status) {
+          supplierCards.forEach((card) => {
+              if (card.dataset.status === status) {
+                  card.style.display = "block";
+              } else {
+                  card.style.display = "none";
+              }
+          });
+      }
+  </script>
 
 </body>
 </html>

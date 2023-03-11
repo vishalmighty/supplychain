@@ -36,7 +36,7 @@ admin.site.register(User, CustomUserAdmin)
 #class for Supplier Details
 class SupplierDetailsAdmin(admin.ModelAdmin):
     list_display = ('user', 'phone_number', 'contact_person', 'quality_score', 'gst_number','address','status')
-    search_fields = ('user__username', 'user__email', 'contact_person', 'gst_number','address')
+    search_fields = ('user__username', 'user__email', 'contact_person', 'gst_number','address','status')
 
 admin.site.register(SupplierDetails, SupplierDetailsAdmin)
 
