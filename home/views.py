@@ -166,10 +166,12 @@ def search_supplier(request):
     supplier_products = SupplierProduct.objects.filter(Q(name__icontains=search_query) | Q(type__icontains=search_query))
     suppliers = SupplierDetails.objects.filter(user__supplierproducts__in=supplier_products)
     supplier_data = []
-
+    suppliers_list = []
     for supplier in suppliers:
-        supplier_products = supplier.user.supplierproducts.filter(Q(name__icontains=search_query) | Q(type__icontains=search_query))
-        supplier_data.append({'supplier': supplier, 'products': supplier_products})
+        if supplier not in suppliers_list:
+            suppliers_list.append(supplier)
+            supplier_products = supplier.user.supplierproducts.filter(Q(name__icontains=search_query) | Q(type__icontains=search_query))
+            supplier_data.append({'supplier': supplier, 'products': supplier_products})
 
     context = {'supplier_data': supplier_data}  
     return render(request, 'manufacturer_home.html', context)

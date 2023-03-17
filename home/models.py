@@ -55,3 +55,24 @@ class SupplierProduct(models.Model):
 
     def __str__(self):
         return self.name
+    
+class SupplierOrder(models.Model):
+    PENDING = 'Pending'
+    COMPLETED = 'Completed'
+    CANCELLED = 'Cancelled'
+    STATUS_CHOICES = [
+        (PENDING, 'Pending'),
+        (COMPLETED, 'Completed'),
+        (CANCELLED, 'Cancelled'),
+    ]
+    id = models.AutoField(primary_key=True)
+    manufacturer_or_retailers = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders',limit_choices_to={'role__in': ['MANUFACTURER', 'RETAILER']})
+    supplier = models.ForeignKey(SupplierDetails, on_delete=models.CASCADE, related_name='orders')
+    product = models.ForeignKey(SupplierProduct, on_delete=models.CASCADE, related_name='orders')
+    quantity = models.IntegerField()
+    order_date = models.DateTimeField(auto_now_add=True)
+    delivery_date = models.DateTimeField()
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default=PENDING)
+    def __str__(self):
+        return f"{self.product.name} ordered by {self.manufacturer.username}"
+

@@ -134,6 +134,7 @@ td.hidden{
                           </tr>
                         </thead>
                         <tbody>
+                          {{supplier_data}}
                           {% for supplier_data in supplier_data %}
                           {% for product in supplier_data.products %}
                           <tr>
@@ -150,6 +151,7 @@ td.hidden{
                             <td>{{product.quantity}}</td>
                             <td>{{product.get_type_display}}</td>
                             <td>{% if product.is_available %}Available{% else %}Not Available{% endif %}</td>
+                            <td><button class="btn btn-primary add-to-cart" data-product-id="{{ product.id }}">Add to cart</button></td>
                           </tr>
                           {% endfor %}
                           {% endfor %}

@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
-from .models import User,SupplierDetails,SupplierProduct
+from .models import User,SupplierDetails,SupplierProduct,SupplierOrder
 
 class CustomUserCreationForm(UserCreationForm):
     class Meta:
@@ -45,4 +45,5 @@ class SupplierProductAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'price', 'quality', 'quantity', 'type', 'is_available')
 
 admin.site.register(SupplierProduct,SupplierProductAdmin)
+admin.site.register(SupplierOrder)
 
