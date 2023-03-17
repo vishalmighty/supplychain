@@ -10,6 +10,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib import messages
 from itertools import chain
 from django.db.models import Q
+from django.http import JsonResponse
 
 # Create your views here.
 
@@ -156,7 +157,8 @@ def add_product_supplier(request):
 
 @allowed_users(allowed_roles=['MANUFACTURER'])
 def manufacturer_home(request):
-    return render(request, 'manufacturer_home.html')
+    text_ = {'search_with_product_name_or_category':"search_with_product_name_or_category"}
+    return render(request, 'manufacturer_home.html',text_)
 
 @allowed_users(allowed_roles=['MANUFACTURER'])
 def search_supplier(request):

@@ -1,4 +1,4 @@
-{% include "layouts/navigation.html" %}
+{% include "layouts/manufacturer_navigation.html" %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -42,7 +42,68 @@
  color: #fff;
  font-size: 16px;
 }
+td.hidden{
+  display: none;
+}
 
+/* popup styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+  }
+
+  /* Modal content */
+  .modal-content {
+    background-color: #fefefe;
+    margin: 10% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 600px;
+  }
+
+  /* Close button */
+  .close {
+    color: #aaaaaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  .close:hover,
+  .close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  /* Add some color to the text */
+  h2,
+  p {
+    color: #333;
+  }
+
+  /* Add some color to the buttons */
+  .supplier-button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  .supplier-button:hover {
+    background-color: #3e8e41;
+  }
 </style>
 
 <body>
@@ -64,11 +125,6 @@
                         <thead>
                           <tr>
                             <th>Supplier Name</th>
-                            <th>Phone Number</th>
-                            <th>Contact Person</th>
-                            <th>Quality Score</th>
-                            <th>GST Number</th>
-                            <th>Address</th>
                             <th>Product Name</th>
                             <th>Price</th>
                             <th>Quality</th>
@@ -82,12 +138,11 @@
                           {% for product in supplier_data.products %}
                           <tr>
                             {% if forloop.first %}
-                            <td rowspan="{{supplier_data.products.count}}">{{supplier_data.supplier.user.username}}</td>
-                            <td rowspan="{{supplier_data.products.count}}">{{supplier_data.supplier.phone_number}}</td>
-                            <td rowspan="{{supplier_data.products.count}}">{{supplier_data.supplier.contact_person}}</td>
-                            <td rowspan="{{supplier_data.products.count}}">{{supplier_data.supplier.quality_score}}</td>
-                            <td rowspan="{{supplier_data.products.count}}">{{supplier_data.supplier.gst_number}}</td>
-                            <td rowspan="{{supplier_data.products.count}}">{{supplier_data.supplier.address}}</td>
+                            <td rowspan="{{supplier_data.products.count}}"><button class="btn btn-link supplier-button">{{supplier_data.supplier.user.username}}</button></td>
+                            <td class="hidden" rowspan="{{supplier_data.products.count}}">{{supplier_data.supplier.phone_number}}</td>
+                            <td class="hidden" rowspan="{{supplier_data.products.count}}">{{supplier_data.supplier.contact_person}}</td>
+                            <td class="hidden" rowspan="{{supplier_data.products.count}}">{{supplier_data.supplier.quality_score}}</td>
+                            <td class="hidden" rowspan="{{supplier_data.products.count}}">{{supplier_data.supplier.address}}</td>
                             {% endif %}
                             <td>{{product.name}}</td>
                             <td>{{product.price}}</td>
@@ -101,10 +156,56 @@
                         </tbody>
                       </table>
                       
-                  
+                      {% if supplier_data is None %}
+                      <h1>{{search_with_product_name_or_category}}</h1>
+                      {% endif %}
             </div>
         </div>
       </div>
+      <div class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+        </div>
+    </div>
+    <script>
+      const supplierButtons = document.querySelectorAll('.supplier-button');
+      const modal = document.querySelector('.modal');
+      const closeBtn = document.querySelector('.close');
+  
+      supplierButtons.forEach(button => {
+          button.addEventListener('click', (e) => {
+            // const supplierData = {{supplier_data}}; try to fix this error
+            // console.log
+              const supplierName = button.textContent;
+              const supplierPhoneNumber = button.parentElement.nextElementSibling.textContent;
+              const supplierContactPerson = button.parentElement.nextElementSibling.nextElementSibling.textContent;
+              const supplierQualityScore = button.parentElement.nextElementSibling.nextElementSibling.nextElementSibling.textContent;
+              const supplierAddress = button.parentElement.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.textContent;
+  
+              const modalContent = `
+                  <h2>${supplierName}</h2>
+                  <p>Phone Number: ${supplierPhoneNumber}</p>
+                  <p>Contact Person: ${supplierContactPerson}</p>
+                  <p>Quality Score: ${supplierQualityScore}</p>
+                  <p>Address: ${supplierAddress}</p>
+              `;
+              modal.querySelector('.modal-content').innerHTML = modalContent;
+  
+              modal.style.display = 'block';
+          });
+      });
+  
+      closeBtn.addEventListener('click', () => {
+          modal.style.display = 'none';
+      });
+  
+      window.addEventListener('click', (e) => {
+          if (e.target == modal) {
+              modal.style.display = 'none';
+          }
+      });
+  </script>
+  
       
 </body>
 </html>
