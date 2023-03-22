@@ -137,7 +137,14 @@ td.hidden{
                           {% for product in supplier_data.products %}
                           <tr>
                             {% if forloop.first %}
-                            <td rowspan="{{supplier_data.products.count}}"><button class="btn btn-link supplier-button">{{supplier_data.supplier.user.username}}</button></td>
+                            <td rowspan="{{supplier_data.products.count}}"><button class="btn btn-link supplier-button" value="{{supplier_data.supplier.user.username}}">{{supplier_data.supplier.user.username}}</button></td>
+                            <td class="hidden" rowspan="{{supplier_data.products.count}}">{{supplier_data.supplier.phone_number}}</td>
+                            <td class="hidden" rowspan="{{supplier_data.products.count}}">{{supplier_data.supplier.contact_person}}</td>
+                            <td class="hidden" rowspan="{{supplier_data.products.count}}">{{supplier_data.supplier.quality_score}}</td>
+                            <td class="hidden" rowspan="{{supplier_data.products.count}}">{{supplier_data.supplier.address}}</td>
+                            {% endif %}
+                            {% if not forloop.first %}
+                            <td rowspan="{{supplier_data.products.count}}" class="hidden"><button class="btn btn-link supplier-button" value="{{supplier_data.supplier.user.username}}">{{supplier_data.supplier.user.username}}</button></td>
                             <td class="hidden" rowspan="{{supplier_data.products.count}}">{{supplier_data.supplier.phone_number}}</td>
                             <td class="hidden" rowspan="{{supplier_data.products.count}}">{{supplier_data.supplier.contact_person}}</td>
                             <td class="hidden" rowspan="{{supplier_data.products.count}}">{{supplier_data.supplier.quality_score}}</td>
@@ -233,13 +240,13 @@ td.hidden{
           const productId = button.getAttribute('data-product-id');
           const productName = button.parentElement.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.textContent;
           const productPrice = button.parentElement.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.textContent;
-          const tdElement = document.querySelector('td');
-          const parentElement = tdElement.parentNode;
-          const supplierName = parentElement.firstChild.textContent;
-        console.log(supplierName);
+          const tdElement = button.parentElement;
+          const parentElement = tdElement.parentElement;
+          const supplierName = parentElement.children[0].firstChild.value;
+
           const modalContent = `
               <h2>Add to Cart</h2>
-              <h6>${supplierName}</h6>
+              <h6>Supplier: ${supplierName}</h6>
               <p>Product: ${productName}</p>
               <p>Product Price: ${productPrice}</p>
               <label for="quantity-input">Quantity:</label>
@@ -271,11 +278,12 @@ td.hidden{
 
           // TODO: Add the product to the cart using AJAX.
           console.log("______-----");
-          console.log(productId,quantity,totalAmount);
+          console.log(productId,quantity,totalAmount,supplierName);
           const formData = new FormData();
           formData.append('product_id', productId);
           formData.append('quantity', quantity);
           formData.append('total_amount', totalAmount);
+          formData.append('supplier_name', supplierName);
           fetch('/add_to_cart', {
               method: 'POST',
               headers: {
@@ -289,7 +297,6 @@ td.hidden{
                   // Display a success message and update the cart total.
                   const message = `Added ${data.product_name} to cart (${data.quantity} x ${data.total_amount})`;
                   alert(message);
-                  updateCartTotal();
               } else {
                   // Display an error message.
                   alert('Error: could not add item to cart');

@@ -186,14 +186,16 @@ def add_to_cart(request):
     # print(request.POST)
     product_id = request.POST['product_id']
     quantity = int(request.POST['quantity'])
-    totalAmount = int(request.POST['total_amount'])
+    totalAmount = float(request.POST['total_amount'])
+    supplier_name = str(request.POST['supplier_name'])
     # Get the product and calculate the total amount.
     product = get_object_or_404(SupplierProduct, id=product_id)
+    supplier = User.objects.get(username=supplier_name)
     total_amount = quantity * product.price
-    print(totalAmount)
+    print(totalAmount,supplier)
     # Check if there is an existing order for the product.
     try:
-        order = SupplierOrder.objects.get(product=product, status=SupplierOrder.PENDING, manufacturer_or_retailers=request.user)
+        order = SupplierOrder.objects.get(product=product, status=SupplierOrder.PENDING, manufacturer_or_retailers=request.user,supplier=supplier)
         # If there is an existing order, update the quantity and total amount.
         order.quantity += quantity
         order.totalamount += total_amount
@@ -202,7 +204,7 @@ def add_to_cart(request):
         # If there is no existing order, create a new one.
         order = SupplierOrder.objects.create(
             manufacturer_or_retailers=request.user,
-            supplier=product.supplier,
+            supplier=supplier,
             product=product,
             quantity=quantity,
             totalamount=total_amount

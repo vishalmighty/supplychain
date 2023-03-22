@@ -66,8 +66,8 @@ class SupplierOrder(models.Model):
         (CANCELLED, 'Cancelled'),
     ]
     id = models.AutoField(primary_key=True)
-    manufacturer_or_retailers = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders',limit_choices_to={'role__in': ['MANUFACTURER', 'RETAILER']})
-    supplier = models.ForeignKey(SupplierDetails, on_delete=models.CASCADE, related_name='orders')
+    manufacturer_or_retailers = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders_placed_by',limit_choices_to={'role__in': ['MANUFACTURER', 'RETAILER']})
+    supplier = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders_received_by',limit_choices_to={'role__in': ['SUPPLIER']})
     product = models.ForeignKey(SupplierProduct, on_delete=models.CASCADE, related_name='orders')
     quantity = models.IntegerField()
     order_date = models.DateTimeField(auto_now_add=True)
@@ -75,5 +75,5 @@ class SupplierOrder(models.Model):
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default=PENDING)
     totalamount = models.FloatField(null=False)
     def __str__(self):
-        return f"{self.product.name} ordered by {self.manufacturer.username}"
+        return f"{self.product.name} ordered by {self.id}"
 
