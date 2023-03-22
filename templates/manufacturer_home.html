@@ -127,14 +127,12 @@ td.hidden{
                             <th>Supplier Name</th>
                             <th>Product Name</th>
                             <th>Price</th>
-                            <th>Quality</th>
                             <th>Quantity</th>
                             <th>Type</th>
                             <th>Is Available</th>
                           </tr>
                         </thead>
                         <tbody>
-                          {{supplier_data}}
                           {% for supplier_data in supplier_data %}
                           {% for product in supplier_data.products %}
                           <tr>
@@ -147,7 +145,7 @@ td.hidden{
                             {% endif %}
                             <td>{{product.name}}</td>
                             <td>{{product.price}}</td>
-                            <td>{{product.quality}}</td>
+                            <td class="hidden">{{product.quality}}</td>
                             <td>{{product.quantity}}</td>
                             <td>{{product.get_type_display}}</td>
                             <td>{% if product.is_available %}Available{% else %}Not Available{% endif %}</td>
@@ -176,8 +174,6 @@ td.hidden{
   
       supplierButtons.forEach(button => {
           button.addEventListener('click', (e) => {
-            // const supplierData = {{supplier_data}}; try to fix this error
-            // console.log
               const supplierName = button.textContent;
               const supplierPhoneNumber = button.parentElement.nextElementSibling.textContent;
               const supplierContactPerson = button.parentElement.nextElementSibling.nextElementSibling.textContent;
@@ -206,6 +202,55 @@ td.hidden{
               modal.style.display = 'none';
           }
       });
+
+      // popup for add to carts 
+      const addToCartButtons = document.querySelectorAll('.add-to-cart');
+      const confirmBtn = document.querySelector('.confirm-btn');
+      const quantityInput = document.querySelector('#quantity-input');
+
+      addToCartButtons.forEach(button => {
+      button.addEventListener('click', (e) => {
+          const productId = button.getAttribute('data-product-id');
+          const productName = button.parentElement.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.textContent;
+          const productPrice = button.parentElement.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.textContent;
+          
+
+          const modalContent = `
+              <h2>Add to Cart</h2>
+              <p>Product: ${productName}</p>
+              <p>Product Price: ${productPrice}</p>
+              <label for="quantity-input">Quantity:</label>
+              <input type="number" id="quantity-input" name="quantity" min="1" value="1">
+              <p>&nbsp;</p>
+              <p>Total amount: <span id="total-amount">${productPrice}</span></p>
+              <button class="btn btn-primary confirm-btn" data-product-id="${productId}">Confirm</button>
+          `;
+          modal.querySelector('.modal-content').innerHTML = modalContent;
+          
+          const quantityInput = modal.querySelector('#quantity-input');
+          let totalAmount = +productPrice * +quantityInput.value;
+          
+
+          quantityInput.addEventListener('input', (e) => {
+            const quantity = +quantityInput.value;
+            const price = +productPrice;
+            totalAmount = quantity * price;
+            const totalAmountSpan = modal.querySelector('#total-amount');
+            totalAmountSpan.textContent = totalAmount;
+          });
+
+          modal.style.display = 'block';
+      });
+  });
+
+  confirmBtn.addEventListener('click', () => {
+      const productId = confirmBtn.getAttribute('data-product-id');
+      const quantity = quantityInput.value;
+
+      // TODO: Add the product to the cart using AJAX.
+
+      modal.style.display = 'none';
+  });
   </script>
   
       
