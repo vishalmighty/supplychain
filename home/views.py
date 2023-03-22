@@ -154,6 +154,12 @@ def add_product_supplier(request):
         form = SupplierProductForm()
     return render(request, 'add_product_supplier.html', {'form': form})
 
+@allowed_users(allowed_roles=['SUPPLIER'])
+def all_orders(request):
+    orders = SupplierOrder.objects.filter(supplier=request.user)
+    context = {'orders': orders}
+    return render(request, 'all_orders.html', context)
+
 
 # Manufacturer
 
@@ -218,6 +224,14 @@ def add_to_cart(request):
         'quantity': order.quantity,
         'total_amount': order.totalamount,
     })
+
+@allowed_users(allowed_roles=['MANUFACTURER'])
+def order_list(request):
+    orders = SupplierOrder.objects.filter(manufacturer_or_retailers=request.user)
+    context = {'orders': orders}
+    return render(request, 'order_list.html', context)
+    
+
 
 # Retailer
 
