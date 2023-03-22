@@ -71,8 +71,9 @@ class SupplierOrder(models.Model):
     product = models.ForeignKey(SupplierProduct, on_delete=models.CASCADE, related_name='orders')
     quantity = models.IntegerField()
     order_date = models.DateTimeField(auto_now_add=True)
-    delivery_date = models.DateTimeField()
+    delivery_date = models.DateTimeField(null=True, blank=True)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default=PENDING)
+    totalamount = models.FloatField(null=False)
     def __str__(self):
         return f"{self.product.name} ordered by {self.manufacturer.username}"
 

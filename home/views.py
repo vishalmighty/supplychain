@@ -5,12 +5,14 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from .decorators import unauthenticateduser,allowed_users
 from django.contrib.auth.models import Group
-from .models import SupplierDetails,SupplierProduct,User
+from .models import SupplierDetails,SupplierProduct,User,SupplierOrder
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib import messages
 from itertools import chain
 from django.db.models import Q
 from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+from datetime import datetime
 
 # Create your views here.
 
@@ -175,6 +177,45 @@ def search_supplier(request):
 
     context = {'supplier_data': supplier_data}  
     return render(request, 'manufacturer_home.html', context)
+
+@require_POST
+@allowed_users(allowed_roles=['MANUFACTURER'])
+def add_to_cart(request):
+    # Get the product and quantity from the POST request.
+    print("add to cart")
+    # print(request.POST)
+    product_id = request.POST['product_id']
+    quantity = int(request.POST['quantity'])
+    totalAmount = int(request.POST['total_amount'])
+    # Get the product and calculate the total amount.
+    product = get_object_or_404(SupplierProduct, id=product_id)
+    total_amount = quantity * product.price
+    print(totalAmount)
+    # Check if there is an existing order for the product.
+    try:
+        order = SupplierOrder.objects.get(product=product, status=SupplierOrder.PENDING, manufacturer_or_retailers=request.user)
+        # If there is an existing order, update the quantity and total amount.
+        order.quantity += quantity
+        order.totalamount += total_amount
+        order.save()
+    except SupplierOrder.DoesNotExist:
+        # If there is no existing order, create a new one.
+        order = SupplierOrder.objects.create(
+            manufacturer_or_retailers=request.user,
+            supplier=product.supplier,
+            product=product,
+            quantity=quantity,
+            totalamount=total_amount
+        )
+
+    # Return a JSON response with the order details.
+    return JsonResponse({
+        'success': True,
+        'order_id': order.id,
+        'product_name': product.name,
+        'quantity': order.quantity,
+        'total_amount': order.totalamount,
+    })
 
 # Retailer
 

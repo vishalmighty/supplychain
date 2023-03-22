@@ -73,15 +73,27 @@ WSGI_APPLICATION = 'scm.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
-
+# db for cleaver cloud
+# if os.environ.get('DB_ENGINE') and os.environ.get('DB_ENGINE') == "mysql":
+#     DATABASES = {
+#         'default': {
+#             'ENGINE': 'django.db.backends.mysql',
+#             'NAME': os.getenv('DB_NAME', 'btwrhju1znudxdiepv0s'), # scm_2
+#             'USER': os.getenv('DB_USERNAME','u833icxmyywvajun'), #vishal
+#             'PASSWORD': os.getenv('DB_PASS', 'flM6i2a84bwHvmFyqX58'), #1234
+#             'HOST': os.getenv('DB_HOST', 'btwrhju1znudxdiepv0s-mysql.services.clever-cloud.com'), #localhost
+#             'PORT': os.getenv('DB_PORT', 3306),
+#         },
+#     }
+    # db for local
 if os.environ.get('DB_ENGINE') and os.environ.get('DB_ENGINE') == "mysql":
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
-            'NAME': os.getenv('DB_NAME', 'scm_2'),
-            'USER': os.getenv('DB_USERNAME','vishal'),
-            'PASSWORD': os.getenv('DB_PASS', '1234'),
-            'HOST': os.getenv('DB_HOST', 'localhost'),
+            'NAME': os.getenv('DB_NAME', 'scm_2'), # 
+            'USER': os.getenv('DB_USERNAME','vishal'), #vishal
+            'PASSWORD': os.getenv('DB_PASS', '1234'), #1234
+            'HOST': os.getenv('DB_HOST', 'localhost'), #localhost
             'PORT': os.getenv('DB_PORT', 3306),
         },
     }

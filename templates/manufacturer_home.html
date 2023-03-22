@@ -167,14 +167,36 @@ td.hidden{
             <span class="close">&times;</span>
         </div>
     </div>
-    <script>
+<script>
+  function getCookie(name) {
+    // Split document.cookie by semicolons into an array.
+    const cookieArr = document.cookie.split(';');
+
+    // Loop through the array elements to find the cookie with the specified name.
+    for (let i = 0; i < cookieArr.length; i++) {
+        const cookiePair = cookieArr[i].split('=');
+
+        // Remove whitespace from the cookie name and compare to the specified name.
+        if (name === cookiePair[0].trim()) {
+            // Decode the cookie value and return it.
+            return decodeURIComponent(cookiePair[1]);
+        }
+    }
+
+    // If the cookie is not found, return null.
+    return null;
+}
+
+      // popup code starts here
+      // popup for supplier details
       const supplierButtons = document.querySelectorAll('.supplier-button');
       const modal = document.querySelector('.modal');
       const closeBtn = document.querySelector('.close');
-  
+      let supplierName = '';
+
       supplierButtons.forEach(button => {
           button.addEventListener('click', (e) => {
-              const supplierName = button.textContent;
+              supplierName = button.textContent;
               const supplierPhoneNumber = button.parentElement.nextElementSibling.textContent;
               const supplierContactPerson = button.parentElement.nextElementSibling.nextElementSibling.textContent;
               const supplierQualityScore = button.parentElement.nextElementSibling.nextElementSibling.nextElementSibling.textContent;
@@ -188,7 +210,6 @@ td.hidden{
                   <p>Address: ${supplierAddress}</p>
               `;
               modal.querySelector('.modal-content').innerHTML = modalContent;
-  
               modal.style.display = 'block';
           });
       });
@@ -205,18 +226,20 @@ td.hidden{
 
       // popup for add to carts 
       const addToCartButtons = document.querySelectorAll('.add-to-cart');
-      const confirmBtn = document.querySelector('.confirm-btn');
-      const quantityInput = document.querySelector('#quantity-input');
+
 
       addToCartButtons.forEach(button => {
       button.addEventListener('click', (e) => {
           const productId = button.getAttribute('data-product-id');
           const productName = button.parentElement.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.textContent;
           const productPrice = button.parentElement.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.textContent;
-          
-
+          const tdElement = document.querySelector('td');
+          const parentElement = tdElement.parentNode;
+          const supplierName = parentElement.firstChild.textContent;
+        console.log(supplierName);
           const modalContent = `
               <h2>Add to Cart</h2>
+              <h6>${supplierName}</h6>
               <p>Product: ${productName}</p>
               <p>Product Price: ${productPrice}</p>
               <label for="quantity-input">Quantity:</label>
@@ -226,6 +249,8 @@ td.hidden{
               <button class="btn btn-primary confirm-btn" data-product-id="${productId}">Confirm</button>
           `;
           modal.querySelector('.modal-content').innerHTML = modalContent;
+
+          const confirmBtn = document.querySelector('.confirm-btn');
           
           const quantityInput = modal.querySelector('#quantity-input');
           let totalAmount = +productPrice * +quantityInput.value;
@@ -240,16 +265,44 @@ td.hidden{
           });
 
           modal.style.display = 'block';
+
+          confirmBtn.addEventListener('click', () => {
+          const quantity = quantityInput.value;
+
+          // TODO: Add the product to the cart using AJAX.
+          console.log("______-----");
+          console.log(productId,quantity,totalAmount);
+          const formData = new FormData();
+          formData.append('product_id', productId);
+          formData.append('quantity', quantity);
+          formData.append('total_amount', totalAmount);
+          fetch('/add_to_cart', {
+              method: 'POST',
+              headers: {
+                  'X-CSRFToken': getCookie('csrftoken'), // Get the CSRF token from cookies.
+              },
+              body: formData,
+          })
+          .then(response => response.json())
+          .then(data => {
+              if (data.success) {
+                  // Display a success message and update the cart total.
+                  const message = `Added ${data.product_name} to cart (${data.quantity} x ${data.total_amount})`;
+                  alert(message);
+                  updateCartTotal();
+              } else {
+                  // Display an error message.
+                  alert('Error: could not add item to cart');
+              }
+          })
+          .catch(error => {
+              console.error(error);
+              alert('Error: could not add item to cart');
+          });
+
+          modal.style.display = 'none';
+          });
       });
-  });
-
-  confirmBtn.addEventListener('click', () => {
-      const productId = confirmBtn.getAttribute('data-product-id');
-      const quantity = quantityInput.value;
-
-      // TODO: Add the product to the cart using AJAX.
-
-      modal.style.display = 'none';
   });
   </script>
   
