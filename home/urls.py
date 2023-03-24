@@ -16,6 +16,7 @@ urlpatterns = [
     #manufacturer
     path('manufacturer_home',views.manufacturer_home,name='manufacturer_home'),
     path('search_supplier',views.search_supplier,name='search_supplier'),
+    path('manufacturer_profile',views.manufacturer_profile,name='manufacturer_profile'),
     path('add_to_cart', views.add_to_cart, name='add_to_cart'),
     path('orders', views.order_list, name='order_list'),
 
