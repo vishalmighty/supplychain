@@ -65,6 +65,10 @@ class SupplierOrder(models.Model):
         (COMPLETED, 'Completed'),
         (CANCELLED, 'Cancelled'),
     ]
+    ORDER_STATUS_CHOICES = [
+        ('in_cart', 'In Cart'),
+        ('order_placed', 'Order Placed'),
+    ]
     id = models.AutoField(primary_key=True)
     manufacturer_or_retailers = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders_placed_by',limit_choices_to={'role__in': ['MANUFACTURER', 'RETAILER']})
     supplier = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders_received_by',limit_choices_to={'role__in': ['SUPPLIER']})
@@ -74,6 +78,7 @@ class SupplierOrder(models.Model):
     delivery_date = models.DateTimeField(null=True, blank=True)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default=PENDING)
     totalamount = models.FloatField(null=False)
+    order_status = models.CharField(max_length=20, choices=ORDER_STATUS_CHOICES, default='in_cart')
     def __str__(self):
         return f"{self.product.name} ordered by {self.id}"
 

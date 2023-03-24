@@ -304,7 +304,7 @@ def add_to_cart(request):
 
 @allowed_users(allowed_roles=['MANUFACTURER'])
 def order_list(request):
-    orders = SupplierOrder.objects.filter(manufacturer_or_retailers=request.user)
+    orders = SupplierOrder.objects.filter(Q(manufacturer_or_retailers=request.user) & Q(order_status='in_cart'))
     context = {'orders': orders}
     return render(request, 'order_list.html', context)
 
@@ -331,6 +331,17 @@ def order_details(request, order_id):
     }
 
     return render(request, 'order_details.html', context)
+
+def remove_from_cart(request, order_id):
+    # Get the order to be removed from the database
+    order = get_object_or_404(SupplierOrder, id=order_id, manufacturer_or_retailers=request.user, order_status='in_cart')
+
+    # If the request is a POST, delete the order and redirect to cart page
+    if request.method == 'POST':
+        order.delete()
+        messages.success(request, 'Order removed from cart successfully.')
+    
+    return redirect('/orders')
     
 
 

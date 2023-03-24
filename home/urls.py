@@ -20,6 +20,7 @@ urlpatterns = [
     path('manufacturer_profile',views.manufacturer_profile,name='manufacturer_profile'),
     path('add_to_cart', views.add_to_cart, name='add_to_cart'),
     path('orders', views.order_list, name='order_list'),
+    path('remove_from_cart/<int:order_id>/', views.remove_from_cart, name='remove_from_cart'),
 
     #retailer
     path('retailer_home',views.retailer_home,name='retailer_home'),
