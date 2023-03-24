@@ -307,6 +307,30 @@ def order_list(request):
     orders = SupplierOrder.objects.filter(manufacturer_or_retailers=request.user)
     context = {'orders': orders}
     return render(request, 'order_list.html', context)
+
+def order_details(request, order_id):
+    # if not request.user.is_superuser:
+    #     return redirect('home')
+    print("Now",order_id)
+    order = get_object_or_404(SupplierOrder, id=order_id)
+    print("debug")
+    if request.method == 'POST':
+        if 'Completed' in request.POST:
+            order.status = 'Completed'
+            order.save()
+            # send email to supplier notifying them of approval
+            return redirect('/all_orders')
+        elif 'Cancelled' in request.POST:
+            order.status = 'Cancelled'
+            order.save()
+            # send email to supplier notifying them of rejection
+            return redirect('/all_orders')
+
+    context = {
+        'order': order
+    }
+
+    return render(request, 'order_details.html', context)
     
 
 
@@ -344,7 +368,7 @@ def manufacturer_admin(request):
         'suppliers': suppliers
     }
 
-    return render(request, 'supplier_admin.html', context)
+    return render(request, 'manufacturer_admin.html', context)
 
 def retailer_admin(request):
     # Get all suppliers with a status of "pending"
@@ -357,7 +381,7 @@ def retailer_admin(request):
         'suppliers': suppliers
     }
 
-    return render(request, 'supplier_admin.html', context)
+    return render(request, 'retailer_admin.html', context)
 
 # @login_required
 def supplier_details(request, supplier_id):
@@ -383,6 +407,54 @@ def supplier_details(request, supplier_id):
     }
 
     return render(request, 'supplier_details.html', context)
+
+def manufacturer_details(request, supplier_id):
+    # if not request.user.is_superuser:
+    #     return redirect('home')
+    print(supplier_id)
+    supplier = get_object_or_404(SupplierDetails, id=supplier_id)
+
+    if request.method == 'POST':
+        if 'approve' in request.POST:
+            supplier.status = 'Approved'
+            supplier.save()
+            # send email to supplier notifying them of approval
+            return redirect('/manufacturer_admin')
+        elif 'reject' in request.POST:
+            supplier.status = 'Rejected'
+            supplier.save()
+            # send email to supplier notifying them of rejection
+            return redirect('/manufacturer_admin')
+
+    context = {
+        'supplier': supplier
+    }
+
+    return render(request, 'manufacturer_details.html', context)
+
+def retailer_details(request, supplier_id):
+    # if not request.user.is_superuser:
+    #     return redirect('home')
+    print(supplier_id)
+    supplier = get_object_or_404(SupplierDetails, id=supplier_id)
+
+    if request.method == 'POST':
+        if 'approve' in request.POST:
+            supplier.status = 'Approved'
+            supplier.save()
+            # send email to supplier notifying them of approval
+            return redirect('/retailer_admin')
+        elif 'reject' in request.POST:
+            supplier.status = 'Rejected'
+            supplier.save()
+            # send email to supplier notifying them of rejection
+            return redirect('/retailer_admin')
+
+    context = {
+        'supplier': supplier
+    }
+
+    return render(request, 'retailer_details.html', context)
 
 @unauthenticateduser
 def user_signup(request):

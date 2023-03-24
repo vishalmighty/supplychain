@@ -12,6 +12,7 @@ urlpatterns = [
     path('edit_product_supplier/<int:product_id>/',views.edit_product_supplier,name='edit_product_supplier'),
     path('delete_product_supplier/<int:product_id>/', views.delete_product_supplier, name='delete_product_supplier'),
     path('all_orders',views.all_orders,name='all_orders'),
+    path('order_details/<int:order_id>/',views.order_details,name='order_details'),
 
     #manufacturer
     path('manufacturer_home',views.manufacturer_home,name='manufacturer_home'),
@@ -33,4 +34,6 @@ urlpatterns = [
      path('manufacturer_admin',views.manufacturer_admin,name='manufacturer_admin'),
      path('retailer_admin',views.retailer_admin,name='retailer_admin'),
      path('supplier_details/<int:supplier_id>/',views.supplier_details,name='supplier_details'),
+     path('manufacturer_details/<int:supplier_id>/',views.manufacturer_details,name='manufacturer_details'),
+     path('retailer_details/<int:supplier_id>/',views.retailer_details,name='retailer_details'),
 ]

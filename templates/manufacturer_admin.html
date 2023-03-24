@@ -1,4 +1,4 @@
-{% include "layouts/navigation.html" %}
+{% include "layouts/admin_navigation.html" %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Supplier Admin</title>
+    <title>Manufacturer Admin</title>
 </head>
 <style>
      .container {
@@ -24,12 +24,19 @@
         font-size: 1.2rem;
         margin-top: 1rem;
     }
+    .supplier-card {
+        margin-bottom: 0.2rem;
+        background-color: #fff;
+        border: 1px solid rgba(0, 0, 0, 0.125);
+        border-radius: 0.25rem;
+        padding: 0.35rem;
+     }
 
-     .supplier-card[data-status="Completed"] {
+     .supplier-card[data-status="Approved"] {
         background-color: #c3e6cb;
      }
 
-     .supplier-card[data-status="Cancelled"] {
+     .supplier-card[data-status="Rejected"] {
         background-color: #f5c6cb;
      }
 </style>
@@ -37,45 +44,23 @@
     <div class="container border mt-2 overflow-auto">
         <div class="row" style="background-color: lightblue;">
             <div class="col-md-12 d-flex justify-content-end align-items-center">
-              <h1 class="text-center mx-auto">ALL Orders</h1>
+              <h1 class="text-center mx-auto">Request for details verification</h1>
             </div>
           </div>
           <div class="row mt-2">
             <div class="col-md-12">
                 <button class="btn btn-primary mb-2" id="btn-pending">Pending</button>
-                <button class="btn btn-success mb-2" id="btn-approved">Completed</button>
-                <button class="btn btn-danger mb-2" id="btn-rejected">Cancelled</button>
+                <button class="btn btn-success mb-2" id="btn-approved">Approved</button>
+                <button class="btn btn-danger mb-2" id="btn-rejected">Rejected</button>
                 <div class="subtitle" id="status-subtitle"></div>
-                <table class="table table-striped mt-3">
-                  <thead>
-                    <tr>
-                      <th>Order ID</th>
-                      <th>Product</th>
-                      <th>Manufacturer/Retailer</th>
-                      <th>Quantity</th>
-                      <th>Order Date</th>
-                      <th>Delivery Date</th>
-                      <th>Status</th>
-                      <th>Total Amount</th>
-                      <th></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {% for order in orders %}
-                    <tr class="supplier-card" data-status="{{ order.status }}">
-                      <td>{{ order.id }}</td>
-                      <td>{{ order.product.name }}</td>
-                      <td>{{ order.manufacturer_or_retailers.username }}</td>
-                      <td>{{ order.quantity }}</td>
-                      <td>{{ order.order_date }}</td>
-                      <td>{{ order.delivery_date }}</td>
-                      <td>{{ order.status }}</td>
-                      <td>{{ order.totalamount }}</td>
-                      <td><a href="{% url 'order_details' order.id %}" class="card-link btn btn-info">Investigate</a></td>
-                    </tr>
-                    {% endfor %}
-                  </tbody>
-                </table>
+                {% for supplier in suppliers %}
+                    <div class="card mb-2 supplier-card" data-status="{{ supplier.status }}">
+                        <div class="card-body d-flex justify-content-between align-items-center">
+                            <span>{{ supplier.user.username }}</span>
+                            <a href="{% url 'manufacturer_details' supplier.id %}" class="card-link btn btn-info">Investigate</a>
+                        </div>
+                    </div>
+                {% endfor %}
             </div>
         </div>
     </div>
@@ -93,19 +78,19 @@
       });
 
       btnApproved.addEventListener("click", () => {
-          filterCards("Completed");
-          statusSubtitle.textContent = "Completed";
+          filterCards("Approved");
+          statusSubtitle.textContent = "Approved";
       });
 
       btnRejected.addEventListener("click", () => {
-          filterCards("Cancelled");
-          statusSubtitle.textContent = "Cancelled";
+          filterCards("Rejected");
+          statusSubtitle.textContent = "Rejected";
       });
 
       function filterCards(status) {
           supplierCards.forEach((card) => {
               if (card.dataset.status === status) {
-                  card.style.display = "table-row";
+                  card.style.display = "block";
               } else {
                   card.style.display = "none";
               }
