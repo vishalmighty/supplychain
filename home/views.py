@@ -247,7 +247,33 @@ def supplier_admin(request):
     # Get all suppliers with a status of "pending"
     # if not request.user.is_superuser:
     #     return redirect('home')
-    suppliers = SupplierDetails.objects.all() 
+    suppliers = SupplierDetails.objects.filter(user__role='SUPPLIER')
+    print(suppliers)
+
+    context = {
+        'suppliers': suppliers
+    }
+
+    return render(request, 'supplier_admin.html', context)
+
+def manufacturer_admin(request):
+    # Get all suppliers with a status of "pending"
+    # if not request.user.is_superuser:
+    #     return redirect('home')
+    suppliers = SupplierDetails.objects.filter(user__role='MANUFACTURER') 
+    print(suppliers)
+
+    context = {
+        'suppliers': suppliers
+    }
+
+    return render(request, 'supplier_admin.html', context)
+
+def retailer_admin(request):
+    # Get all suppliers with a status of "pending"
+    # if not request.user.is_superuser:
+    #     return redirect('home')
+    suppliers = SupplierDetails.objects.filter(user__role='RETAILER') 
     print(suppliers)
 
     context = {

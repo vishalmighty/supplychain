@@ -29,5 +29,7 @@ urlpatterns = [
     path('user_login',views.user_login,name='user_login'),
 
      path('supplier_admin',views.supplier_admin,name='admin_home'),
+     path('manufacturer_admin',views.manufacturer_admin,name='manufacturer_admin'),
+     path('retailer_admin',views.retailer_admin,name='retailer_admin'),
      path('supplier_details/<int:supplier_id>/',views.supplier_details,name='supplier_details'),
 ]
