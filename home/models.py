@@ -91,6 +91,7 @@ class SupplierOrderRecord(models.Model):
         (PENDING, 'Pending'),
         (COMPLETED, 'Completed'),
         (CANCELLED, 'Cancelled'),
+        ('CUSTOMER_CANCELLED','Customer_Cancelled')
     ]
     ORDER_STATUS_CHOICES = [
         ('in_cart', 'In Cart'),
@@ -104,7 +105,7 @@ class SupplierOrderRecord(models.Model):
     quantity = models.IntegerField()
     order_date = models.DateTimeField(auto_now_add=True)
     delivery_date = models.DateTimeField(null=True, blank=True)
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default=PENDING)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=PENDING)
     totalamount = models.FloatField(null=False)
     order_status = models.CharField(max_length=20, choices=ORDER_STATUS_CHOICES, default='in_cart')
     def __str__(self):

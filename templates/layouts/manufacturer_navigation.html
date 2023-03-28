@@ -2,6 +2,11 @@
 {% load static %}
 <link href='{% static "css/navigation_styles.css" %}' rel="stylesheet" />
 {% block stylesheets %}{% endblock stylesheets %}
+<style>
+  .fa-shopping-basket:before {
+  content: "\f291";
+}
+</style>
 <!--Main Navigation-->
 <header class="mb-4 fixed-top">
   <!-- Jumbotron -->
@@ -11,21 +16,13 @@
         <!-- Right elements -->
         <div
           class="col-md-5 d-flex justify-content-center justify-content-md-start align-items-center d-none d-lg-flex">
-          <a class="text-reset me-3" href="/search_supplier">
-            <i class="fas fa-th-large"></i>
-          </a>
-          <a class="text-reset me-3" href="/#">
+          <a class="text-reset me-3" href="/">
             <i class="fas fa-home"></i>
           </a>
-          <a class="text-reset me-3" href="#">
-            <i class="fas fa-columns me-1"></i>
-            <span class="d-none d-xl-inline-block">Boards</span>
+          <a class="text-reset me-3" href="/purchase_orders">
+            <i class="fas fa-shopping-basket"></i>
           </a>
 
-          <form class="d-flex input-group w-auto my-auto mb-3 mb-md-0">
-            <input autocomplete="off" type="search" class="form-control rounded" placeholder="Search" />
-            <span class="input-group-text border-0 d-none d-lg-flex"><i class="fas fa-search"></i></span>
-          </form>
         </div>
         <!-- Right elements -->
 
@@ -40,7 +37,7 @@
 
         <!-- Right elements -->
         <div class="col-lg-5 d-flex justify-content-center justify-content-md-end align-items-center">
-          <a class="text-reset me-3" href="orders">
+          <a class="text-reset me-3" href="/orders">
             <i class="fas fa-shopping-cart"></i>
           </a>
 

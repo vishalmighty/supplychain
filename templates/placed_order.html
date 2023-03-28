@@ -11,11 +11,14 @@
             <div class="card-body">
               <h5 class="card-title">{{ order.product.name }}</h5>
               <p class="card-text">Quantity: {{ order.quantity }}</p>
-              <p class="card-text">Price: ${{ order.totalamount }}</p>
-              <form action="{% url 'remove_from_cart' order.id %}" method="POST">
+              <p class="card-text">Price: Rs: {{ order.totalamount }}</p>
+              <p class="card-text">Status: {{ order.status }}</p>
+              {% if order.status == "Pending" %}
+              <form action="{% url 'customer_cancel' order.id %}" method="POST">
                 {% csrf_token %}
-                <button type="submit" class="btn btn-danger btn-sm">Remove from Cart</button>
+                <button type="submit" class="btn btn-danger btn-sm" name="customer_cancel">Cancel Item</button>
               </form>
+              {% endif%}
             </div>
           </div>
         </div>
@@ -28,9 +31,6 @@
             <div class="row">
               <div class="col-md-3">
                 <h4>Total Amount: {{sum_total_amount}}</h4>
-              </div>
-              <div class="col-md-3 text-right">
-                <button type="submit" class="btn btn-primary">Purchase</button>
               </div>
             </div>
           </form>          

@@ -318,7 +318,7 @@ def order_list(request):
 @allowed_users(allowed_roles=['MANUFACTURER'])
 def transfer_to_record_db(request):
     if request.method == 'POST':
-        total_amount = request.POST.get('total_amount')
+        total_amount = request.POST.get('sum_total_amount')
         # Get all orders for the currently logged-in user
         user_orders = SupplierOrder.objects.filter(manufacturer_or_retailers=request.user)
         if SupplierOrderRecord.objects.all().exists():
@@ -353,7 +353,39 @@ def transfer_to_record_db(request):
         sum_total_amount= sum_total_amount+order.totalamount
     
     context = {'orders': orders,'sum_total_amount':sum_total_amount}
-    return render(request, 'order_list.html', context)
+    return render(request, 'placed_order.html', context)
+
+@allowed_users(allowed_roles=['MANUFACTURER'])
+def customer_cancel(request,order_id):
+    if request.method == 'POST':
+        total_amount = request.POST.get('sum_total_amount')
+        # Get the current SupplierOrderRecord object using its primary key value or any other unique identifier
+        record = SupplierOrderRecord.objects.get(id=order_id)
+
+        # Check if the current user is the manufacturer_or_retailers of the SupplierOrderRecord
+        if request.user == record.manufacturer_or_retailers:
+            # Update the status field to CUSTOMER_CANCELLED
+            record.status = 'CUSTOMER_CANCELLED'
+            record.save()
+
+    orders = SupplierOrderRecord.objects.filter(manufacturer_or_retailers=request.user)
+    sum_total_amount = 0
+    for order in orders:
+        sum_total_amount= sum_total_amount+order.totalamount
+    
+    context = {'orders': orders,'sum_total_amount':sum_total_amount}
+    return render(request, 'placed_order.html', context)
+
+#Displaying placed_orders
+@allowed_users(allowed_roles=['MANUFACTURER'])
+def purchase_orders(request):
+    orders = SupplierOrderRecord.objects.filter(manufacturer_or_retailers=request.user)
+    sum_total_amount = 0
+    for order in orders:
+        sum_total_amount= sum_total_amount+order.totalamount
+    
+    context = {'orders': orders,'sum_total_amount':sum_total_amount}
+    return render(request, 'placed_order.html', context)
 
 def order_details(request, order_id):
     # if not request.user.is_superuser:

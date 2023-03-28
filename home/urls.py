@@ -21,6 +21,8 @@ urlpatterns = [
     path('add_to_cart', views.add_to_cart, name='add_to_cart'),
     path('orders', views.order_list, name='order_list'),
     path('transfer_to_record_db', views.transfer_to_record_db, name='transfer_to_record_db'),
+    path('customer_cancel/<int:order_id>/', views.customer_cancel, name='customer_cancel'),
+    path('purchase_orders', views.purchase_orders, name='purchase_orders'),
     path('remove_from_cart/<int:order_id>/', views.remove_from_cart, name='remove_from_cart'),
 
     #retailer
