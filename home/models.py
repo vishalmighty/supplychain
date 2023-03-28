@@ -82,3 +82,30 @@ class SupplierOrder(models.Model):
     def __str__(self):
         return f"{self.product.name} ordered by {self.id}"
 
+
+class SupplierOrderRecord(models.Model):
+    PENDING = 'Pending'
+    COMPLETED = 'Completed'
+    CANCELLED = 'Cancelled'
+    STATUS_CHOICES = [
+        (PENDING, 'Pending'),
+        (COMPLETED, 'Completed'),
+        (CANCELLED, 'Cancelled'),
+    ]
+    ORDER_STATUS_CHOICES = [
+        ('in_cart', 'In Cart'),
+        ('order_placed', 'Order Placed'),
+    ]
+    id = models.AutoField(primary_key=True)
+    order_id = models.IntegerField()
+    manufacturer_or_retailers = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders_placed_by_record',limit_choices_to={'role__in': ['MANUFACTURER', 'RETAILER']})
+    supplier = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders_received_by_record',limit_choices_to={'role__in': ['SUPPLIER']})
+    product = models.ForeignKey(SupplierProduct, on_delete=models.CASCADE, related_name='orders_record')
+    quantity = models.IntegerField()
+    order_date = models.DateTimeField(auto_now_add=True)
+    delivery_date = models.DateTimeField(null=True, blank=True)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default=PENDING)
+    totalamount = models.FloatField(null=False)
+    order_status = models.CharField(max_length=20, choices=ORDER_STATUS_CHOICES, default='in_cart')
+    def __str__(self):
+        return f"{self.product.name} ordered by {self.id}"

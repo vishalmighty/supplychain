@@ -5,7 +5,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from .decorators import unauthenticateduser,allowed_users
 from django.contrib.auth.models import Group
-from .models import SupplierDetails,SupplierProduct,User,SupplierOrder
+from .models import SupplierDetails,SupplierProduct,User,SupplierOrder,SupplierOrderRecord
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib import messages
 from itertools import chain
@@ -304,8 +304,55 @@ def add_to_cart(request):
 
 @allowed_users(allowed_roles=['MANUFACTURER'])
 def order_list(request):
+    if request.method == 'POST':
+        total_amount = request.POST.get('total_amount')
+        print(total_amount,"gopi")
     orders = SupplierOrder.objects.filter(Q(manufacturer_or_retailers=request.user) & Q(order_status='in_cart'))
-    context = {'orders': orders}
+    sum_total_amount = 0
+    for order in orders:
+        sum_total_amount= sum_total_amount+order.totalamount
+    
+    context = {'orders': orders,'sum_total_amount':sum_total_amount}
+    return render(request, 'order_list.html', context)
+
+@allowed_users(allowed_roles=['MANUFACTURER'])
+def transfer_to_record_db(request):
+    if request.method == 'POST':
+        total_amount = request.POST.get('total_amount')
+        # Get all orders for the currently logged-in user
+        user_orders = SupplierOrder.objects.filter(manufacturer_or_retailers=request.user)
+        if SupplierOrderRecord.objects.all().exists():
+            # get the greatest order_id from the db
+            greatest_order_id = (SupplierOrderRecord.objects.all().order_by('-order_id').first().order_id)+1
+        else:
+            # set the greatest_order_id to 1 if there is no data in the db
+            greatest_order_id = 1
+            # Iterate through the orders and create new objects with the same values but a new primary key and order_id
+        for order in user_orders:
+            new_order = SupplierOrderRecord(
+                id=None,  # This will create a new object with a new primary key
+                manufacturer_or_retailers=order.manufacturer_or_retailers,
+                supplier=order.supplier,
+                product=order.product,
+                quantity=order.quantity,
+                order_date=order.order_date,
+                delivery_date=order.delivery_date,
+                status=order.status,
+                totalamount=order.totalamount,
+                order_status='in_cart',
+                order_id=greatest_order_id,  # Generate a new UUID for the order_id field
+            )
+            new_order.save()  # Save the new object to the database
+
+        # Delete the original orders that have been transferred to the new table
+        user_orders.delete()
+
+    orders = SupplierOrder.objects.filter(Q(manufacturer_or_retailers=request.user) & Q(order_status='in_cart'))
+    sum_total_amount = 0
+    for order in orders:
+        sum_total_amount= sum_total_amount+order.totalamount
+    
+    context = {'orders': orders,'sum_total_amount':sum_total_amount}
     return render(request, 'order_list.html', context)
 
 def order_details(request, order_id):
