@@ -156,7 +156,7 @@ def add_product_supplier(request):
 
 @allowed_users(allowed_roles=['SUPPLIER'])
 def all_orders(request):
-    orders = SupplierOrder.objects.filter(supplier=request.user)
+    orders = SupplierOrderRecord.objects.filter(supplier=request.user)
     context = {'orders': orders}
     return render(request, 'all_orders.html', context)
 
@@ -348,11 +348,18 @@ def transfer_to_record_db(request):
         user_orders.delete()
 
     orders = SupplierOrder.objects.filter(Q(manufacturer_or_retailers=request.user) & Q(order_status='in_cart'))
-    sum_total_amount = 0
+    sum_pending_total_amount = 0
+    sum_completed_total_amount = 0
+    sum_canceled_total_amount = 0
     for order in orders:
-        sum_total_amount= sum_total_amount+order.totalamount
+        if order.status == 'Pending':
+            sum_pending_total_amount= sum_pending_total_amount+order.totalamount
+        elif order.status == 'Completed':
+            sum_completed_total_amount= sum_completed_total_amount+order.totalamount
+        else:
+            sum_canceled_total_amount= sum_canceled_total_amount+order.totalamount
     
-    context = {'orders': orders,'sum_total_amount':sum_total_amount}
+    context = {'orders': orders,'sum_pending_total_amount':sum_pending_total_amount,'sum_completed_total_amount':sum_completed_total_amount,'sum_canceled_total_amount':sum_canceled_total_amount}
     return render(request, 'placed_order.html', context)
 
 @allowed_users(allowed_roles=['MANUFACTURER'])
@@ -369,22 +376,36 @@ def customer_cancel(request,order_id):
             record.save()
 
     orders = SupplierOrderRecord.objects.filter(manufacturer_or_retailers=request.user)
-    sum_total_amount = 0
+    sum_pending_total_amount = 0
+    sum_completed_total_amount = 0
+    sum_canceled_total_amount = 0
     for order in orders:
-        sum_total_amount= sum_total_amount+order.totalamount
+        if order.status == 'Pending':
+            sum_pending_total_amount= sum_pending_total_amount+order.totalamount
+        elif order.status == 'Completed':
+            sum_completed_total_amount= sum_completed_total_amount+order.totalamount
+        else:
+            sum_canceled_total_amount= sum_canceled_total_amount+order.totalamount
     
-    context = {'orders': orders,'sum_total_amount':sum_total_amount}
+    context = {'orders': orders,'sum_pending_total_amount':sum_pending_total_amount,'sum_completed_total_amount':sum_completed_total_amount,'sum_canceled_total_amount':sum_canceled_total_amount}
     return render(request, 'placed_order.html', context)
 
 #Displaying placed_orders
 @allowed_users(allowed_roles=['MANUFACTURER'])
 def purchase_orders(request):
     orders = SupplierOrderRecord.objects.filter(manufacturer_or_retailers=request.user)
-    sum_total_amount = 0
+    sum_pending_total_amount = 0
+    sum_completed_total_amount = 0
+    sum_canceled_total_amount = 0
     for order in orders:
-        sum_total_amount= sum_total_amount+order.totalamount
+        if order.status == 'Pending':
+            sum_pending_total_amount= sum_pending_total_amount+order.totalamount
+        elif order.status == 'Completed':
+            sum_completed_total_amount= sum_completed_total_amount+order.totalamount
+        else:
+            sum_canceled_total_amount= sum_canceled_total_amount+order.totalamount
     
-    context = {'orders': orders,'sum_total_amount':sum_total_amount}
+    context = {'orders': orders,'sum_pending_total_amount':sum_pending_total_amount,'sum_completed_total_amount':sum_completed_total_amount,'sum_canceled_total_amount':sum_canceled_total_amount}
     return render(request, 'placed_order.html', context)
 
 def order_details(request, order_id):

@@ -91,7 +91,7 @@ class SupplierOrderRecord(models.Model):
         (PENDING, 'Pending'),
         (COMPLETED, 'Completed'),
         (CANCELLED, 'Cancelled'),
-        ('CUSTOMER_CANCELLED','Customer_Cancelled')
+        ('Customer_Cancelled','Customer_Cancelled')
     ]
     ORDER_STATUS_CHOICES = [
         ('in_cart', 'In Cart'),

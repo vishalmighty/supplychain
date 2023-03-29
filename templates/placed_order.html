@@ -1,45 +1,176 @@
 {% include "layouts/manufacturer_navigation.html" %}
 
-{% block content %}
-  <div class="container">
-    <h1 class="text-center mb-4">My Cart Items</h1>
-    <div class="row">
-      {% if orders %}
-        {% for order in orders %}
-        <div class="col-md-4 mb-4">
-          <div class="card">
-            <div class="card-body">
-              <h5 class="card-title">{{ order.product.name }}</h5>
-              <p class="card-text">Quantity: {{ order.quantity }}</p>
-              <p class="card-text">Price: Rs: {{ order.totalamount }}</p>
-              <p class="card-text">Status: {{ order.status }}</p>
-              {% if order.status == "Pending" %}
-              <form action="{% url 'customer_cancel' order.id %}" method="POST">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-danger btn-sm" name="customer_cancel">Cancel Item</button>
-              </form>
-              {% endif%}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Ordered Items</title>
+</head>
+<style>
+     .container {
+  max-height: 700px; /* adjust this value as needed */
+  min-height: 450px;
+}
+
+.card-link {
+  text-decoration: none;
+  color: #212529;
+}
+.subtitle {
+        text-align: center;
+        font-weight: bold;
+        font-size: 1.2rem;
+        margin-top: 1rem;
+    }
+    .supplier-card {
+        margin-bottom: 0.2rem;
+        background-color: #fff;
+        border: 1px solid rgba(0, 0, 0, 0.125);
+        border-radius: 0.25rem;
+        padding: 0.35rem;
+     }
+
+     .supplier-card[data-status="Approved"] {
+        background-color: #c3e6cb;
+     }
+
+     .supplier-card[data-status="Rejected"] {
+        background-color: #f5c6cb;
+     }
+
+.total_amount_display_pending {
+  display: block;
+}
+.total_amount_display_completed {
+  display: none;
+}
+.total_amount_display_canceled {
+  display: none;
+}
+
+</style>
+<body>
+    <div class="container border mt-2 overflow-auto">
+        <div class="row" style="background-color: lightblue;">
+            <div class="col-md-12 d-flex justify-content-end align-items-center">
+              <h1 class="text-center mx-auto">My cart items</h1>
             </div>
           </div>
-        </div>
-        {% endfor %}
-        <div class="col-md-12">
-          <hr>
-          <form action="{% url 'transfer_to_record_db' %}" method="POST">
-            {% csrf_token %}
-            <input type="hidden" name="sum_total_amount" value="{{ sum_total_amount }}">
-            <div class="row">
-              <div class="col-md-3">
-                <h4>Total Amount: {{sum_total_amount}}</h4>
-              </div>
+          <div class="row mt-2">
+            <div class="col-md-12">
+                <button class="btn btn-primary mb-2" id="btn-pending">Pending</button>
+                <button class="btn btn-success mb-2" id="btn-approved">Completed</button>
+                <button class="btn btn-danger mb-2" id="btn-rejected">Cancelled</button>
+                <div class="subtitle" id="status-subtitle"></div>
+            {% if orders %}
+                {% for order in orders %}
+                <div class="col-md-4 mb-4">
+                    <div class="card mb-2 supplier-card" data-status="{{ order.status }}">
+                    <div class="card-body">
+                      <h5 class="card-title">{{ order.product.name }}</h5>
+                      <p class="card-text">Quantity: {{ order.quantity }}</p>
+                      <p class="card-text">Price: Rs: {{ order.totalamount }}</p>
+                      <p class="card-text">Status: {{ order.status }}</p>
+                      {% if order.status == "Pending" %}
+                      <form action="{% url 'customer_cancel' order.id %}" method="POST">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-sm" name="customer_cancel">Cancel Item</button>
+                      </form>
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+                {% endfor %}
+                <div class="col-md-12">
+                  <hr>
+                    <div class="row">
+                      <div class="col-md-3 total_amount_display_pending">
+                        <h1>Total amount :{{sum_pending_total_amount}}</h1>
+                      </div>
+                      <div class="col-md-3 total_amount_display_completed">
+                        <h1>Total amount :{{sum_completed_total_amount}}</h1>
+                      </div>
+                      <div class="col-md-3 total_amount_display_canceled">
+                        <h1>Total amount :{{sum_canceled_total_amount}}</h1>
+                      </div>
+                    </div>   
+                </div>
+              {% else %}
+                <div class="col-md-12">
+                  <p class="text-center">You have not added any items to cart yet.</p>
+                </div>
+              {% endif %}
+
             </div>
-          </form>          
         </div>
-      {% else %}
-        <div class="col-md-12">
-          <p class="text-center">You have not added any items to cart yet.</p>
-        </div>
-      {% endif %}
     </div>
-  </div>
-{% endblock %}
+    <script>
+      const btnPending = document.querySelector("#btn-pending");
+      const btnApproved = document.querySelector("#btn-approved");
+      const btnRejected = document.querySelector("#btn-rejected");
+      const supplierCards = document.querySelectorAll(".supplier-card");
+      const statusSubtitle = document.querySelector("#status-subtitle");
+
+      const total_amount_display_pending = document.querySelector('.total_amount_display_pending');
+      const total_amount_display_completed = document.querySelector('.total_amount_display_completed');
+      const total_amount_display_canceled = document.querySelector('.total_amount_display_canceled');
+      filterCards("Pending");
+      statusSubtitle.textContent = "Pending";
+      btnPending.addEventListener("click", () => {
+          filterCards("Pending");
+          statusSubtitle.textContent = "Pending";
+          total_amount_display_pending.style.display = "block";
+          total_amount_display_completed.style.display = "none";
+          total_amount_display_canceled.style.display = "none";
+      });
+
+      btnApproved.addEventListener("click", () => {
+          filterCards("Completed");
+          statusSubtitle.textContent = "Completed";
+          total_amount_display_pending.style.display = "none";
+          total_amount_display_completed.style.display = "block";
+          total_amount_display_canceled.style.display = "none";
+      });
+
+      btnRejected.addEventListener("click", () => {
+        filterCardsCancel("Cancelled");
+        filterCardsCancel("Customer_Cancelled");
+          statusSubtitle.textContent = "Cancelled";
+          total_amount_display_pending.style.display = "none";
+          total_amount_display_completed.style.display = "none";
+          total_amount_display_canceled.style.display = "block";
+      });
+
+      function filterCards(status) {
+          supplierCards.forEach((card) => {
+              if (card.dataset.status === status) {
+                  card.style.display = "block";
+              } else {
+                  card.style.display = "none";
+              }
+          });
+      }
+
+      function filterCardsCancel(status) {
+        console.log("________")
+          supplierCards.forEach((card) => {
+            console.log(status,card.dataset.status)
+              if (card.dataset.status === "Customer_Cancelled") {
+                  card.style.display = "block";
+              } else if(card.dataset.status === "Cancelled") {
+                  card.style.display = "block";
+              }
+             else if(card.dataset.status === "CUSTOMER_CANCELLED") {
+                  card.style.display = "block";
+              }
+              else{
+                card.style.display = "none";
+              }
+          });
+      }
+  </script>
+
+</body>
+</html>
