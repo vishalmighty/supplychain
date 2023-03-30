@@ -262,7 +262,7 @@ def manufacturer_profile(request):
     return render(request, 'manufacturer_profile.html', context)
 
 @require_POST
-@allowed_users(allowed_roles=['MANUFACTURER'])
+@allowed_users(allowed_roles=['MANUFACTURER','RETAILER'])
 def add_to_cart(request):
     # Get the product and quantity from the POST request.
     print("add to cart")
@@ -574,8 +574,171 @@ def retailer_profile(request):
     }
     return render(request, 'retailer_profile.html', context)
 
-# Admin items
+#ordering raw prodcuts for retailer
+@allowed_users(allowed_roles=['RETAILER'])
+def order_raw_goods(request):
+    text_ = {'search_with_product_name_or_category':"search_with_product_name_or_category"}
+    return render(request, 'order_raw_goods.html',text_)
 
+@allowed_users(allowed_roles=['RETAILER'])
+def search_supplier_for_retailer(request):
+    search_query = request.GET.get('search_box')
+    supplier_products = SupplierProduct.objects.filter(Q(name__icontains=search_query) | Q(type__icontains=search_query))
+    suppliers = SupplierDetails.objects.filter(user__supplierproducts__in=supplier_products)
+    supplier_data = []
+    suppliers_list = []
+    for supplier in suppliers:
+        if supplier not in suppliers_list:
+            suppliers_list.append(supplier)
+            supplier_products = supplier.user.supplierproducts.filter(Q(name__icontains=search_query) | Q(type__icontains=search_query))
+            supplier_data.append({'supplier': supplier, 'products': supplier_products})
+
+    context = {'supplier_data': supplier_data}  
+    return render(request, 'order_raw_goods.html', context)
+
+@allowed_users(allowed_roles=['RETAILER'])
+def orders_retailer(request):
+    if request.method == 'POST':
+        total_amount = request.POST.get('total_amount')
+        print(total_amount,"gopi")
+    orders = SupplierOrder.objects.filter(Q(manufacturer_or_retailers=request.user) & Q(order_status='in_cart'))
+    sum_total_amount = 0
+    for order in orders:
+        sum_total_amount= sum_total_amount+order.totalamount
+    
+    context = {'orders': orders,'sum_total_amount':sum_total_amount}
+    return render(request, 'orders_retailer.html', context)
+
+@allowed_users(allowed_roles=['RETAILER'])
+def remove_from_cart_retailer(request, order_id):
+    # Get the order to be removed from the database
+    order = get_object_or_404(SupplierOrder, id=order_id, manufacturer_or_retailers=request.user, order_status='in_cart')
+
+    # If the request is a POST, delete the order and redirect to cart page
+    if request.method == 'POST':
+        order.delete()
+        messages.success(request, 'Order removed from cart successfully.')
+    
+    return redirect('/orders_retailer')
+
+@allowed_users(allowed_roles=['RETAILER'])
+def transfer_to_record_db_retailer(request):
+    if request.method == 'POST':
+        total_amount = request.POST.get('sum_total_amount')
+        # Get all orders for the currently logged-in user
+        user_orders = SupplierOrder.objects.filter(manufacturer_or_retailers=request.user)
+        if SupplierOrderRecord.objects.all().exists():
+            # get the greatest order_id from the db
+            greatest_order_id = (SupplierOrderRecord.objects.all().order_by('-order_id').first().order_id)+1
+        else:
+            # set the greatest_order_id to 1 if there is no data in the db
+            greatest_order_id = 1
+            # Iterate through the orders and create new objects with the same values but a new primary key and order_id
+        for order in user_orders:
+            new_order = SupplierOrderRecord(
+                id=None,  # This will create a new object with a new primary key
+                manufacturer_or_retailers=order.manufacturer_or_retailers,
+                supplier=order.supplier,
+                product=order.product,
+                quantity=order.quantity,
+                order_date=order.order_date,
+                delivery_date=order.delivery_date,
+                status=order.status,
+                totalamount=order.totalamount,
+                order_status='in_cart',
+                order_id=greatest_order_id,  # Generate a new UUID for the order_id field
+            )
+            new_order.save()  # Save the new object to the database
+
+        # Delete the original orders that have been transferred to the new table
+        user_orders.delete()
+
+    orders = SupplierOrder.objects.filter(Q(manufacturer_or_retailers=request.user) & Q(order_status='in_cart'))
+    sum_pending_total_amount = 0
+    sum_completed_total_amount = 0
+    sum_canceled_total_amount = 0
+    for order in orders:
+        if order.status == 'Pending':
+            sum_pending_total_amount= sum_pending_total_amount+order.totalamount
+        elif order.status == 'Completed':
+            sum_completed_total_amount= sum_completed_total_amount+order.totalamount
+        else:
+            sum_canceled_total_amount= sum_canceled_total_amount+order.totalamount
+    
+    context = {'orders': orders,'sum_pending_total_amount':sum_pending_total_amount,'sum_completed_total_amount':sum_completed_total_amount,'sum_canceled_total_amount':sum_canceled_total_amount}
+    return render(request, 'placed_order_retailer.html', context)
+
+@allowed_users(allowed_roles=['RETAILER'])
+def customer_cancel_retailer(request,order_id):
+    if request.method == 'POST':
+        total_amount = request.POST.get('sum_total_amount')
+        # Get the current SupplierOrderRecord object using its primary key value or any other unique identifier
+        record = SupplierOrderRecord.objects.get(id=order_id)
+
+        # Check if the current user is the manufacturer_or_retailers of the SupplierOrderRecord
+        if request.user == record.manufacturer_or_retailers:
+            # Update the status field to CUSTOMER_CANCELLED
+            record.status = 'CUSTOMER_CANCELLED'
+            record.save()
+
+    orders = SupplierOrderRecord.objects.filter(manufacturer_or_retailers=request.user)
+    sum_pending_total_amount = 0
+    sum_completed_total_amount = 0
+    sum_canceled_total_amount = 0
+    for order in orders:
+        if order.status == 'Pending':
+            sum_pending_total_amount= sum_pending_total_amount+order.totalamount
+        elif order.status == 'Completed':
+            sum_completed_total_amount= sum_completed_total_amount+order.totalamount
+        else:
+            sum_canceled_total_amount= sum_canceled_total_amount+order.totalamount
+    
+    context = {'orders': orders,'sum_pending_total_amount':sum_pending_total_amount,'sum_completed_total_amount':sum_completed_total_amount,'sum_canceled_total_amount':sum_canceled_total_amount}
+    return render(request, 'placed_order_retailer.html', context)
+
+#Displaying placed_orders
+@allowed_users(allowed_roles=['RETAILER'])
+def purchase_orders_retailer(request):
+    orders = SupplierOrderRecord.objects.filter(manufacturer_or_retailers=request.user)
+    sum_pending_total_amount = 0
+    sum_completed_total_amount = 0
+    sum_canceled_total_amount = 0
+    for order in orders:
+        if order.status == 'Pending':
+            sum_pending_total_amount= sum_pending_total_amount+order.totalamount
+        elif order.status == 'Completed':
+            sum_completed_total_amount= sum_completed_total_amount+order.totalamount
+        else:
+            sum_canceled_total_amount= sum_canceled_total_amount+order.totalamount
+    
+    context = {'orders': orders,'sum_pending_total_amount':sum_pending_total_amount,'sum_completed_total_amount':sum_completed_total_amount,'sum_canceled_total_amount':sum_canceled_total_amount}
+    return render(request, 'placed_order_retailer.html', context)
+
+
+#ordering prodcuts for retailer
+@allowed_users(allowed_roles=['RETAILER'])
+def order_products(request):
+    text_ = {'search_with_product_name_or_category':"search_with_product_name_or_category"}
+    return render(request, 'order_products.html',text_)
+
+# @allowed_users(allowed_roles=['RETAILER'])
+# def search_supplier(request):
+#     search_query = request.GET.get('search_box')
+#     supplier_products = SupplierProduct.objects.filter(Q(name__icontains=search_query) | Q(type__icontains=search_query))
+#     suppliers = SupplierDetails.objects.filter(user__supplierproducts__in=supplier_products)
+#     supplier_data = []
+#     suppliers_list = []
+#     for supplier in suppliers:
+#         if supplier not in suppliers_list:
+#             suppliers_list.append(supplier)
+#             supplier_products = supplier.user.supplierproducts.filter(Q(name__icontains=search_query) | Q(type__icontains=search_query))
+#             supplier_data.append({'supplier': supplier, 'products': supplier_products})
+
+#     context = {'supplier_data': supplier_data}  
+#     return render(request, 'manufacturer_home.html', context)
+
+
+# Admin items
 
 
 def supplier_admin(request):

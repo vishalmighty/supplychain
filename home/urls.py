@@ -33,8 +33,16 @@ urlpatterns = [
     #retailer
     path('retailer_home',views.retailer_home,name='retailer_home'),
     path('retailer_profile',views.retailer_profile,name='retailer_profile'),
-
-
+    #placing orders(adding to cart)
+    path('order_raw_goods',views.order_raw_goods,name='order_raw_goods'),
+    path('order_products',views.order_products,name='order_products'),
+    path('search_supplier_for_retailer',views.search_supplier_for_retailer,name='search_supplier_for_retailer'),
+    #cart to order
+    path('orders_retailer', views.orders_retailer, name='orders_retailer'),
+    path('remove_from_cart_retailer/<int:order_id>/', views.remove_from_cart_retailer, name='remove_from_cart_retailer'),
+    path('transfer_to_record_db_retailer', views.transfer_to_record_db_retailer, name='transfer_to_record_db_retailer'),
+    path('customer_cancel_retailer/<int:order_id>/', views.customer_cancel_retailer, name='customer_cancel_retailer'),
+    path('purchase_orders_retailer', views.purchase_orders_retailer, name='purchase_orders_retailer'),
    
     path('user_logout',views.user_logout,name='user_logout'),
     path('user_signup',views.user_signup,name='user_signup'),
