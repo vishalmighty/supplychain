@@ -451,6 +451,84 @@ def remove_from_cart(request, order_id):
 def retailer_home(request):
     return render(request, 'retailer_home.html')
 
+@allowed_users(allowed_roles=['RETAILER'])
+def retailer_profile(request):
+    #To check if supplier details already exist
+    user_details = 'disp_mode'
+    try:
+        supplier_profile = SupplierDetails.objects.get(user=request.user)
+        address = supplier_profile.address
+        contact_person = supplier_profile.contact_person
+        phone_number = supplier_profile.phone_number
+        gst_number = supplier_profile.gst_number
+        status = supplier_profile.status
+        print(status)
+        profile_picture = supplier_profile.profile_pic.url if supplier_profile.profile_pic else None
+        if request.method == 'POST':
+            if 'edit' in request.POST:
+                user_details = 'edit_mode'
+            elif 'submit' in request.POST:
+                supplier_profile.address = request.POST['address']
+                supplier_profile.contact_person = request.POST['contact_person']
+                supplier_profile.phone_number = request.POST['phone_number']
+                supplier_profile.gst_number = request.POST['gst_number']
+                supplier_profile.status = 'Pending' # give P in caps or will get error
+                print(supplier_profile.status)
+                # Get and validate the profile picture
+                profile_picture = request.FILES.get('profile_picture')
+                print(profile_picture)
+                if profile_picture:
+                    supplier_profile.profile_pic = profile_picture
+                supplier_profile.save()
+                print(supplier_profile.status)
+                address = supplier_profile.address
+                contact_person = supplier_profile.contact_person
+                phone_number = supplier_profile.phone_number
+                gst_number = supplier_profile.gst_number
+                status = supplier_profile.status                
+                profile_picture = supplier_profile.profile_pic.url if supplier_profile.profile_pic else None
+                messages.success(request, 'Profile updated successfully!')
+                user_details = 'disp_mode'
+    except SupplierDetails.DoesNotExist:
+        if request.method == 'POST':
+            if 'submit' in request.POST:
+                address = request.POST['address']
+                contact_person = request.POST['contact_person']
+                phone_number = request.POST['phone_number']
+                gst_number = request.POST['gst_number']
+                status='Pending'
+                # Get and validate the profile picture
+                profile_picture = request.FILES.get('profile_picture')
+                supplier_profile = SupplierDetails(user=request.user,
+                                                   address= address,
+                                                   contact_person= contact_person,
+                                                   phone_number= phone_number,
+                                                   gst_number= gst_number,
+                                                   status='Pending')
+                if profile_picture:
+                    supplier_profile.profile_pic = profile_picture
+                supplier_profile.save()
+                messages.success(request, 'Profile created successfully!')
+                user_details = 'disp_mode'
+        else:
+            user_details = 'edit_mode'
+            address = ''
+            contact_person = ''
+            phone_number = ''
+            gst_number = ''
+            status = 'Pending'
+            profile_picture = None
+    context = {
+        'user_details': user_details,
+        'address': address,
+        'contact_person': contact_person,
+        'phone_number': phone_number,
+        'gst_number': gst_number,
+        'status': status,
+        'profile_picture': profile_picture,
+    }
+    return render(request, 'retailer_profile.html', context)
+
 # Admin items
 
 

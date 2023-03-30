@@ -1,0 +1,137 @@
+{% include "layouts/retailer_navigation.html" %}
+<!-- [ Main Content ] start -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Supplier Details</title>
+  <!-- Include Bootstrap CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  {% load static%}
+  <link href='{% static "css/supplier_profile_styles.css" %}' rel="stylesheet" />
+  <style>
+    .badge {
+        position: absolute;
+        top: 0;
+        right: 0;
+        transform: translate(50%, -50%);
+    }
+    .badge-star {
+  display: inline-block;
+  padding: 20px 35px;
+  font-size: 14px;
+  line-height: 3;
+  text-align: center;
+  background-color: #ffcc00;
+  color: #fff;
+  border-radius: 0;
+  -webkit-clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+}
+
+</style>
+</head>
+<body>
+  <!-- Supplier Details -->
+  <div class="container my-5">
+    <h2 class="mb-4">My Profile</h2>
+    <div class="row">
+      <!-- Supplier Info Card -->
+      <div class="col-md-6 mb-4">
+        <div class="card">
+          <form method="post" action="/retailer_profile" enctype="multipart/form-data">
+            {% csrf_token %}
+          <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h5 class="card-title mb-0">Store Info</h5>
+            {% if user_details == 'disp_mode' %}
+            <button class="btn btn-secondary" type="submit" name="edit">Edit</button>
+            {% else %}
+            <button class="btn btn-secondary" type="submit" name="submit">Submit</button>
+            {% endif %}
+            {% if status %}
+            <span class="badge badge-star">{{status}}</span>
+            {% endif %}
+          </div>
+          <div class="card-body">
+            <p class="card-text">Store's Name: {{request.user}}</p> 
+            <hr class="dark-hr">
+            <p class="card-text">
+              <div class="form-group">
+                <label for="contact_person">Address: &nbsp;</label>
+                {% if user_details == 'disp_mode' %}
+                <label>{{address}}</label>
+                {% else %}
+                <input type="text" name="address" id="address" class="form-control" value="{{address}}">
+                {% endif %}
+              </div>
+          </p>
+            <hr class="dark-hr">
+            <p class="card-text">
+              <div class="form-group">
+                <label for="contact_person">Contact Person: &nbsp;</label>
+                {% if user_details == 'disp_mode' %}
+                <label>{{contact_person}}</label>
+                {% else %}
+                <input type="text" name="contact_person" id="contact_person" class="form-control" value={{contact_person}}>
+                {% endif %}
+              </div>
+          </p>
+            <hr class="dark-hr">
+
+            <p class="card-text">
+              <div class="form-group">
+                <label for="phone_number">Phone Number:     &nbsp;</label>
+                {% if user_details == 'disp_mode' %}
+                <label>{{phone_number}}</label>
+                {% else %}
+                <input type="text" name="phone_number" id="phone_number" class="form-control" value={{phone_number}}>
+                {% endif %}
+              </div>
+            </p>
+            <hr class="dark-hr">
+
+            <p class="card-text">
+              <div class="form-group">
+                <label for="gst_number">GST Number:     &nbsp;</label>
+                {% if user_details == 'disp_mode' %}
+                <label>{{gst_number}}</label>
+                {% else %}
+                <input type="text" name="gst_number" id="gst_number" class="form-control" value={{gst_number}}>
+                {% endif %}
+              </div>
+            </p>
+            <hr class="dark-hr">
+            <p class="card-text">Rating: 1 2 3 4 5</p>
+            <hr class="dark-hr">
+          </div>
+        </div>
+      </div>
+
+<!-- Profile pic card -->
+<div class="col-md-6 mb-4">
+  <div class="card">
+    <div class="card-header bg-primary text-white">
+      <h5 class="card-title mb-0">Profile Picture</h5>
+    </div>
+    <div class="card-body">
+      {% if user_details == 'disp_mode' %}
+      <img src="{{ profile_picture }}" alt="Profile Picture" class="img-fluid rounded-circle">
+      {% else %}
+      <input type="file" name="profile_picture" id="profile_picture" class="form-control" value="{{profile_picture}}">
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+  <!-- Include Bootstrap JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
+
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}{% endblock javascripts %}

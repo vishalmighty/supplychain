@@ -27,6 +27,7 @@ urlpatterns = [
 
     #retailer
     path('retailer_home',views.retailer_home,name='retailer_home'),
+    path('retailer_profile',views.retailer_profile,name='retailer_profile'),
 
 
    
