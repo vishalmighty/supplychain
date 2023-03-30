@@ -1,11 +1,11 @@
 from django.shortcuts import render, redirect,get_object_or_404
 from django.contrib.auth.forms import UserCreationForm
-from .forms import CreateUserForm, SupplierProductForm
+from .forms import CreateUserForm, SupplierProductForm,ManufacturerProductForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from .decorators import unauthenticateduser,allowed_users
 from django.contrib.auth.models import Group
-from .models import SupplierDetails,SupplierProduct,User,SupplierOrder,SupplierOrderRecord
+from .models import SupplierDetails,SupplierProduct,User,SupplierOrder,SupplierOrderRecord,ManufacturerProduct
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib import messages
 from itertools import chain
@@ -442,7 +442,52 @@ def remove_from_cart(request, order_id):
         messages.success(request, 'Order removed from cart successfully.')
     
     return redirect('/orders')
+
+@allowed_users(allowed_roles=['MANUFACTURER'])
+def manufacturer_product(request):
+    user_products = ManufacturerProduct.objects.filter(user=request.user).order_by('type')
+    type_list = sorted(set([p.type for p in user_products]))
+    # Combine products with the same type into a single list
+    user_products = list(chain.from_iterable([list(filter(lambda p: p.type == t, user_products)) for t in type_list]))
+    context = {'user_products': user_products}
+    return render(request, 'manufacturer_product.html',context)
+
+@allowed_users(allowed_roles=['MANUFACTURER'])
+def add_product_manufacturer(request):
+    if request.method == 'POST':
+        form = ManufacturerProductForm(request.POST)
+        if form.is_valid():
+            product = form.save(commit=False)
+            product.user = request.user
+            product.save()
+            return redirect('manufacturer_product')
+    else:
+        form = ManufacturerProductForm()
+    return render(request, 'add_product_manufacturer.html', {'form': form})
     
+@allowed_users(allowed_roles=['MANUFACTURER'])
+def edit_product_manufacturer(request, product_id):
+    product = get_object_or_404(ManufacturerProduct, id=product_id)
+    if request.method == 'GET':
+        context = {
+            'product': product
+        }
+        return render(request, 'edit_product_manufacturer.html', context)
+    elif request.method == 'POST':
+        product.name = request.POST.get('name')
+        product.price = request.POST.get('price')
+        product.quality = request.POST.get('quality')
+        product.quantity = request.POST.get('quantity')
+        product.type = request.POST.get('type')
+        product.is_available = request.POST.get('is_available', False) == 'on'
+        product.save()
+        return redirect('manufacturer_product')
+
+@allowed_users(allowed_roles=['MANUFACTURER'])
+def delete_product_manufacturer(request, product_id):
+    product = ManufacturerProduct.objects.get(id=product_id)
+    product.delete()
+    return redirect('manufacturer_product')
 
 
 # Retailer

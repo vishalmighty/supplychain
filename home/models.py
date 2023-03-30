@@ -110,3 +110,24 @@ class SupplierOrderRecord(models.Model):
     order_status = models.CharField(max_length=20, choices=ORDER_STATUS_CHOICES, default='in_cart')
     def __str__(self):
         return f"{self.product.name} ordered by {self.id}"
+    
+class ManufacturerProduct(models.Model):
+    type_choices = (
+        ('Dairy products','DAIRY PRODUCTS'),
+        ('Fruits','FRUITS'),
+        ('Vegetables','VEGETABLES'),
+        ('Meat and poultry','MEAT AND POULTRY'),
+        ('Grains and cereals','Grains and cereals'),
+        ('Baked goods and breads','Baked goods and breads'),
+        ('Beverages','Beverages'),
+        ('Snack foods','Snack foods'),
+        ('Condiments and spices','Condiments and spices')
+    )
+    id = models.AutoField(primary_key=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='manufacturerproducts')
+    name = models.CharField(max_length=100)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    quality = models.IntegerField()
+    quantity = models.IntegerField()
+    type = models.CharField(max_length=50,choices=type_choices)
+    is_available = models.BooleanField(default=True)

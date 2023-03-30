@@ -24,6 +24,11 @@ urlpatterns = [
     path('customer_cancel/<int:order_id>/', views.customer_cancel, name='customer_cancel'),
     path('purchase_orders', views.purchase_orders, name='purchase_orders'),
     path('remove_from_cart/<int:order_id>/', views.remove_from_cart, name='remove_from_cart'),
+    #add manufactuer products
+    path('manufacturer_product',views.manufacturer_product,name='manufacturer_product'),
+    path('add_product_manufacturer',views.add_product_manufacturer,name='add_product_manufacturer'),
+    path('edit_product_manufacturer/<int:product_id>/',views.edit_product_manufacturer,name='edit_product_manufacturer'),
+    path('delete_product_manufacturer/<int:product_id>/', views.delete_product_manufacturer, name='delete_product_manufacturer'),
 
     #retailer
     path('retailer_home',views.retailer_home,name='retailer_home'),

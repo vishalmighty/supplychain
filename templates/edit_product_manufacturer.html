@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Add Product</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+</head>
+<body>
+  <div class="container">
+    <h1 class="text-center mb-4">Edit Product</h1>
+    <form method="POST" action="{% url 'edit_product_manufacturer' product.id %}">
+  {% csrf_token %}
+  <div class="form-group">
+    <label for="name">Product Name:</label>
+    <input type="text" id="name" name="name" class="form-control" value="{{ product.name }}">
+  </div>
+
+  <div class="form-group">
+    <label for="price">Price:</label>
+    <input type="text" id="price" name="price" class="form-control" value="{{ product.price }}">
+  </div>
+
+  <div class="form-group">
+    <label for="quality">Quality:</label>
+    <input type="text" id="quality" name="quality" class="form-control" value="{{ product.quality }}">
+  </div>
+
+  <div class="form-group">
+    <label for="quantity">Quantity:</label>
+    <input type="text" id="quantity" name="quantity" class="form-control" value="{{ product.quantity }}">
+  </div>
+
+  <div class="form-group">
+    <label for="type">Type:</label>
+    <select id="type" name="type" class="form-control">
+      {% for choice in product.type_choices %}
+        <option value="{{ choice.0 }}" {% if choice.0 == product.type %}selected{% endif %}>{{ choice.1 }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div class="form-group form-check">
+    <input type="checkbox" id="is_available" name="is_available" class="form-check-input" {% if product.is_available %}checked{% endif %}>
+    <label for="is_available" class="form-check-label">Is Available:</label>
+  </div>
+
+  <button type="submit" class="btn btn-primary">Save</button>
+</form>
+</div>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+</body>
+</html>
