@@ -1,0 +1,55 @@
+{% include "layouts/importing_css_js.html" %}
+<div class="container border mt-2">
+    <div class="row" style="background-color: lightblue;">
+      <div class="col-md-10 d-flex justify-content-end align-items-center">
+        <h1 class="text-center mx-auto">{{ order.manufacturer_or_retailers.username }}</h1>
+      </div>
+      <div class="col-md-2 d-flex justify-content-end align-items-center">
+        <form method="post">
+          {% csrf_token %}
+          <div class="btn-group" role="group">
+            <button type="submit" class="btn btn-success margin-right:2px;" name="Completed">Completed</button>
+            <button type="submit" class="btn btn-danger" name="Cancelled">Cancelled</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="row mt-2">
+      <div class="col-md-4">
+        <img src="#" alt="{{ order.manufacturer_or_retailers.username }}" class="img-fluid">
+      </div>
+      <div class="col-md-8">
+        <div class="card mb-2">
+          <div class="card-body">
+            <h5 class="card-title">Product:</h5>
+            <p class="card-text">{{ order.product.name }}</p>
+          </div>
+        </div>
+        <div class="card mb-2">
+          <div class="card-body">
+            <h5 class="card-title">No of Products required:</h5>
+            <p class="card-text">{{ order.quantity }}</p>
+          </div>
+        </div>
+        <div class="card mb-2">
+          <div class="card-body">
+            <h5 class="card-title">Order Date:</h5>
+            <p class="card-text">{{ order.order_date }}</p>
+          </div>
+        </div>
+        <div class="card mb-2">
+          <div class="card-body">
+            <h5 class="card-title">Status:</h5>
+            <p class="card-text">{{ order.status }}</p>
+          </div>
+        </div>
+        <div class="card mb-2">
+          <div class="card-body">
+            <h5 class="card-title">Total Amount:</h5>
+            <p class="card-text">{{ order.totalamount }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  

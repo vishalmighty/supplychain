@@ -29,6 +29,9 @@ urlpatterns = [
     path('add_product_manufacturer',views.add_product_manufacturer,name='add_product_manufacturer'),
     path('edit_product_manufacturer/<int:product_id>/',views.edit_product_manufacturer,name='edit_product_manufacturer'),
     path('delete_product_manufacturer/<int:product_id>/', views.delete_product_manufacturer, name='delete_product_manufacturer'),
+    #see orders for my products
+    path('all_manu_orders',views.all_manu_orders,name='all_manu_orders'),
+    path('manu_order_details/<int:order_id>/',views.manu_order_details,name='manu_order_details'),
 
     #retailer
     path('retailer_home',views.retailer_home,name='retailer_home'),

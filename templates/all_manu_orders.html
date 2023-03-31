@@ -1,0 +1,117 @@
+{% include "layouts/manufacturer_navigation.html" %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All My orders for my Products</title>
+</head>
+<style>
+     .container {
+  max-height: 700px; /* adjust this value as needed */
+  min-height: 450px;
+}
+
+.card-link {
+  text-decoration: none;
+  color: #212529;
+}
+.subtitle {
+        text-align: center;
+        font-weight: bold;
+        font-size: 1.2rem;
+        margin-top: 1rem;
+    }
+
+     .supplier-card[data-status="Completed"] {
+        background-color: #c3e6cb;
+     }
+
+     .supplier-card[data-status="Cancelled"] {
+        background-color: #f5c6cb;
+     }
+</style>
+<body>
+    <div class="container border mt-2 overflow-auto">
+        <div class="row" style="background-color: lightblue;">
+            <div class="col-md-12 d-flex justify-content-end align-items-center">
+              <h1 class="text-center mx-auto">ALL Orders</h1>
+            </div>
+          </div>
+          <div class="row mt-2">
+            <div class="col-md-12">
+                <button class="btn btn-primary mb-2" id="btn-pending">Pending</button>
+                <button class="btn btn-success mb-2" id="btn-approved">Completed</button>
+                <button class="btn btn-danger mb-2" id="btn-rejected">Cancelled</button>
+                <div class="subtitle" id="status-subtitle"></div>
+                <table class="table table-striped mt-3">
+                  <thead>
+                    <tr>
+                      <th>Order ID</th>
+                      <th>Product</th>
+                      <th>Manufacturer/Retailer</th>
+                      <th>Quantity</th>
+                      <th>Order Date</th>
+                      <th>Delivery Date</th>
+                      <th>Status</th>
+                      <th>Total Amount</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for order in orders %}
+                    <tr class="supplier-card" data-status="{{ order.status }}">
+                      <td>{{ order.id }}</td>
+                      <td>{{ order.product.name }}</td>
+                      <td>{{ order.manufacturer_or_retailers.username }}</td>
+                      <td>{{ order.quantity }}</td>
+                      <td>{{ order.order_date }}</td>
+                      <td>{{ order.delivery_date }}</td>
+                      <td>{{ order.status }}</td>
+                      <td>{{ order.totalamount }}</td>
+                      <td><a href="{% url 'manu_order_details' order.id %}" class="card-link btn btn-info">Investigate</a></td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <script>
+      const btnPending = document.querySelector("#btn-pending");
+      const btnApproved = document.querySelector("#btn-approved");
+      const btnRejected = document.querySelector("#btn-rejected");
+      const supplierCards = document.querySelectorAll(".supplier-card");
+      const statusSubtitle = document.querySelector("#status-subtitle");
+      filterCards("Pending");
+      statusSubtitle.textContent = "Pending";
+      btnPending.addEventListener("click", () => {
+          filterCards("Pending");
+          statusSubtitle.textContent = "Pending";
+      });
+
+      btnApproved.addEventListener("click", () => {
+          filterCards("Completed");
+          statusSubtitle.textContent = "Completed";
+      });
+
+      btnRejected.addEventListener("click", () => {
+          filterCards("Cancelled");
+          statusSubtitle.textContent = "Cancelled";
+      });
+
+      function filterCards(status) {
+          supplierCards.forEach((card) => {
+              if (card.dataset.status === status) {
+                  card.style.display = "table-row";
+              } else {
+                  card.style.display = "none";
+              }
+          });
+      }
+  </script>
+
+</body>
+</html>

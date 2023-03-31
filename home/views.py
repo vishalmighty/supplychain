@@ -489,6 +489,36 @@ def delete_product_manufacturer(request, product_id):
     product.delete()
     return redirect('manufacturer_product')
 
+@allowed_users(allowed_roles=['MANUFACTURER'])
+def all_manu_orders(request):
+    orders = ManufacturerOrderRecord.objects.filter(supplier=request.user)
+    context = {'orders': orders}
+    return render(request, 'all_manu_orders.html', context)
+
+def manu_order_details(request, order_id):
+    # if not request.user.is_superuser:
+    #     return redirect('home')
+    print("Now",order_id)
+    order = get_object_or_404(ManufacturerOrderRecord, id=order_id)
+    print("debug")
+    if request.method == 'POST':
+        if 'Completed' in request.POST:
+            order.status = 'Completed'
+            order.save()
+            # send email to supplier notifying them of approval
+            return redirect('/all_manu_orders')
+        elif 'Cancelled' in request.POST:
+            order.status = 'Cancelled'
+            order.save()
+            # send email to supplier notifying them of rejection
+            return redirect('/all_manu_orders')
+
+    context = {
+        'order': order
+    }
+
+    return render(request, 'manu_order_details.html', context)
+
 
 # Retailer
 
