@@ -43,6 +43,13 @@ urlpatterns = [
     path('transfer_to_record_db_retailer', views.transfer_to_record_db_retailer, name='transfer_to_record_db_retailer'),
     path('customer_cancel_retailer/<int:order_id>/', views.customer_cancel_retailer, name='customer_cancel_retailer'),
     path('purchase_orders_retailer', views.purchase_orders_retailer, name='purchase_orders_retailer'),
+    path('search_manufacturer_for_retailer',views.search_manufacturer_for_retailer,name='search_manufacturer_for_retailer'),
+    #order manufactureres products from retailer 
+    path('add_products_to_cart', views.add_products_to_cart, name='add_products_to_cart'),
+    path('remove_prod_from_cart_retailer/<int:order_id>/', views.remove_prod_from_cart_retailer, name='remove_prod_from_cart_retailer'),
+    path('prod_transfer_to_record_db_retailer', views.prod_transfer_to_record_db_retailer, name='prod_transfer_to_record_db_retailer'),
+    path('manu_customer_cancel_retailer/<int:order_id>/', views.manu_customer_cancel_retailer, name='manu_customer_cancel_retailer'),
+    path('manu_purchase_orders_retailer', views.manu_purchase_orders_retailer, name='manu_purchase_orders_retailer'),
    
     path('user_logout',views.user_logout,name='user_logout'),
     path('user_signup',views.user_signup,name='user_signup'),

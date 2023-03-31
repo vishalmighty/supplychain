@@ -113,7 +113,7 @@ td.hidden{
               <h1 class="text-center mx-auto">Products available</h1>
             </div>
             <div class="col-md-4 d-flex justify-content-end align-items-center ml-auto search-box mt-2">
-                <form method="GET" action="{% url 'search_supplier' %}">
+                <form method="GET" action="{% url 'search_manufacturer_for_retailer' %}">
                     <input type="text" name="search_box" placeholder="Search products..." value="{{ request.GET.search_box }}">
                     <button type="submit" class="btn btn-primary">Search</button>
                 </form>
@@ -290,7 +290,7 @@ td.hidden{
           formData.append('quantity', quantity);
           formData.append('total_amount', totalAmount);
           formData.append('supplier_name', supplierName);
-          fetch('/add_to_cart', {
+          fetch('/add_products_to_cart', {
               method: 'POST',
               headers: {
                   'X-CSRFToken': getCookie('csrftoken'), // Get the CSRF token from cookies.

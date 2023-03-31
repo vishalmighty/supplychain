@@ -1,4 +1,4 @@
-{% include "layouts/manufacturer_navigation.html" %}
+{% include "layouts/retailer_navigation.html" %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -55,7 +55,7 @@
     <div class="container border mt-2 overflow-auto">
         <div class="row" style="background-color: lightblue;">
             <div class="col-md-12 d-flex justify-content-end align-items-center">
-              <h1 class="text-center mx-auto">My Ordered Items</h1>
+              <h1 class="text-center mx-auto">My Ordered items</h1>
             </div>
           </div>
           <div class="row mt-2">
@@ -74,7 +74,7 @@
                       <p class="card-text">Price: Rs: {{ order.totalamount }}</p>
                       <p class="card-text">Status: {{ order.status }}</p>
                       {% if order.status == "Pending" %}
-                      <form action="{% url 'customer_cancel' order.id %}" method="POST">
+                      <form action="{% url 'manu_customer_cancel_retailer' order.id %}" method="POST">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-danger btn-sm" name="customer_cancel">Cancel Item</button>
                       </form>
