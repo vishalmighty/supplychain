@@ -11,22 +11,13 @@
         <!-- Right elements -->
         <div
           class="col-md-5 d-flex justify-content-center justify-content-md-start align-items-center d-none d-lg-flex">
-          <a class="text-reset me-3" href="#">
-            <i class="fas fa-th-large"></i>
-          </a>
           <a class="text-reset me-3" href="/supplier_home">
             <i class="fas fa-home"></i>
           </a>
           <a class="text-reset me-3" href="all_orders">
             <i class="fas fa-shopping-bag"></i>
           </a>          
-
-          <form class="d-flex input-group w-auto my-auto mb-3 mb-md-0">
-            <input autocomplete="off" type="search" class="form-control rounded" placeholder="Search" />
-            <span class="input-group-text border-0 d-none d-lg-flex"><i class="fas fa-search"></i></span>
-          </form>
         </div>
-        <!-- Right elements -->
 
         <!-- Center elements -->
         <div class="col-md-2 d-none d-lg-block">
@@ -39,15 +30,9 @@
 
         <!-- Right elements -->
         <div class="col-lg-5 d-flex justify-content-center justify-content-md-end align-items-center">
-          <a class="text-reset me-3" href="#">
-            <i class="fas fa-plus"></i>
-          </a>
-          <a class="text-reset me-3" href="#">
-            <i class="fas fa-info-circle"></i>
-          </a>
 
           <!-- Notification -->
-          <div class="dropdown">
+          <!-- <div class="dropdown">
             <a class="text-reset me-3 dropdown-toggle hidden-arrow" href="#" id="navbarDropdownMenuLink" role="button"
               data-mdb-toggle="dropdown" aria-expanded="false">
               <i class="fas fa-bell"></i>
@@ -59,7 +44,7 @@
                 <a class="dropdown-item" href="#">Something else here</a>
               </li>
             </ul>
-          </div>
+          </div> -->
 
           <!-- User -->
           <div class="dropdown">
@@ -70,7 +55,6 @@
             </a>
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
               <li><a class="dropdown-item" href="/supplier_profile">My profile</a></li>
-              <li><a class="dropdown-item" href="#">Settings</a></li>
               <li><a class="dropdown-item" href="{% url 'user_logout' %}">Logout</a></li>
             </ul>
           </div>

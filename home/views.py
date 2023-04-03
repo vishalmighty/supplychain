@@ -52,6 +52,7 @@ def edit_product_supplier(request, product_id):
         product.price = request.POST.get('price')
         product.quality = request.POST.get('quality')
         product.quantity = request.POST.get('quantity')
+        product.credit_period = request.POST.get('credit_period')
         product.type = request.POST.get('type')
         product.is_available = request.POST.get('is_available', False) == 'on'
         product.save()
@@ -74,6 +75,7 @@ def supplier_profile(request):
         phone_number = supplier_profile.phone_number
         gst_number = supplier_profile.gst_number
         status = supplier_profile.status
+        quality_score = supplier_profile.quality_score
         print(status)
         profile_picture = supplier_profile.profile_pic.url if supplier_profile.profile_pic else None
         if request.method == 'POST':
@@ -115,6 +117,7 @@ def supplier_profile(request):
                                                    contact_person= contact_person,
                                                    phone_number= phone_number,
                                                    gst_number= gst_number,
+                                                   quality_score = 0,
                                                    status='Pending')
                 if profile_picture:
                     supplier_profile.profile_pic = profile_picture
@@ -129,6 +132,7 @@ def supplier_profile(request):
             gst_number = ''
             status = 'Pending'
             profile_picture = None
+            quality_score = 0
     context = {
         'user_details': user_details,
         'address': address,
@@ -137,6 +141,7 @@ def supplier_profile(request):
         'gst_number': gst_number,
         'status': status,
         'profile_picture': profile_picture,
+        'quality_score': quality_score
     }
     return render(request, 'supplier_profile.html', context)
 
@@ -195,6 +200,7 @@ def manufacturer_profile(request):
         phone_number = supplier_profile.phone_number
         gst_number = supplier_profile.gst_number
         status = supplier_profile.status
+        quality_score = supplier_profile.quality_score
         print(status)
         profile_picture = supplier_profile.profile_pic.url if supplier_profile.profile_pic else None
         if request.method == 'POST':
@@ -236,6 +242,7 @@ def manufacturer_profile(request):
                                                    contact_person= contact_person,
                                                    phone_number= phone_number,
                                                    gst_number= gst_number,
+                                                   quality_score = 0,
                                                    status='Pending')
                 if profile_picture:
                     supplier_profile.profile_pic = profile_picture
@@ -250,6 +257,7 @@ def manufacturer_profile(request):
             gst_number = ''
             status = 'Pending'
             profile_picture = None
+            quality_score = 0
     context = {
         'user_details': user_details,
         'address': address,
@@ -258,6 +266,7 @@ def manufacturer_profile(request):
         'gst_number': gst_number,
         'status': status,
         'profile_picture': profile_picture,
+        'quality_score': quality_score
     }
     return render(request, 'manufacturer_profile.html', context)
 
@@ -290,7 +299,8 @@ def add_to_cart(request):
             supplier=supplier,
             product=product,
             quantity=quantity,
-            totalamount=total_amount
+            totalamount=total_amount,
+            credit_period = product.credit_period
         )
 
     # Return a JSON response with the order details.
@@ -339,6 +349,7 @@ def transfer_to_record_db(request):
                 delivery_date=order.delivery_date,
                 status=order.status,
                 totalamount=order.totalamount,
+                credit_period=order.credit_period,
                 order_status='in_cart',
                 order_id=greatest_order_id,  # Generate a new UUID for the order_id field
             )
@@ -360,7 +371,7 @@ def transfer_to_record_db(request):
             sum_canceled_total_amount= sum_canceled_total_amount+order.totalamount
     
     context = {'orders': orders,'sum_pending_total_amount':sum_pending_total_amount,'sum_completed_total_amount':sum_completed_total_amount,'sum_canceled_total_amount':sum_canceled_total_amount}
-    return render(request, 'placed_order.html', context)
+    return redirect('/purchase_orders')
 
 @allowed_users(allowed_roles=['MANUFACTURER'])
 def customer_cancel(request,order_id):
@@ -478,6 +489,7 @@ def edit_product_manufacturer(request, product_id):
         product.price = request.POST.get('price')
         product.quality = request.POST.get('quality')
         product.quantity = request.POST.get('quantity')
+        product.credit_period = request.POST.get('credit_period')
         product.type = request.POST.get('type')
         product.is_available = request.POST.get('is_available', False) == 'on'
         product.save()
@@ -537,6 +549,7 @@ def retailer_profile(request):
         phone_number = supplier_profile.phone_number
         gst_number = supplier_profile.gst_number
         status = supplier_profile.status
+        quality_score = supplier_profile.quality_score
         print(status)
         profile_picture = supplier_profile.profile_pic.url if supplier_profile.profile_pic else None
         if request.method == 'POST':
@@ -579,6 +592,7 @@ def retailer_profile(request):
                                                    contact_person= contact_person,
                                                    phone_number= phone_number,
                                                    gst_number= gst_number,
+                                                   quality_score = 0,
                                                    status='Pending')
                 if profile_picture:
                     supplier_profile.profile_pic = profile_picture
@@ -592,7 +606,8 @@ def retailer_profile(request):
             phone_number = ''
             gst_number = ''
             status = 'Pending'
-            profile_picture = None
+            profile_picture = None,
+            quality_score = 0
     context = {
         'user_details': user_details,
         'address': address,
@@ -601,6 +616,7 @@ def retailer_profile(request):
         'gst_number': gst_number,
         'status': status,
         'profile_picture': profile_picture,
+        'quality_score': quality_score
     }
     return render(request, 'retailer_profile.html', context)
 
@@ -679,6 +695,7 @@ def transfer_to_record_db_retailer(request):
                 status=order.status,
                 totalamount=order.totalamount,
                 order_status='in_cart',
+                credit_period=order.credit_period,
                 order_id=greatest_order_id,  # Generate a new UUID for the order_id field
             )
             new_order.save()  # Save the new object to the database
@@ -699,7 +716,7 @@ def transfer_to_record_db_retailer(request):
             sum_canceled_total_amount= sum_canceled_total_amount+order.totalamount
     
     context = {'orders': orders,'sum_pending_total_amount':sum_pending_total_amount,'sum_completed_total_amount':sum_completed_total_amount,'sum_canceled_total_amount':sum_canceled_total_amount}
-    return render(request, 'placed_order_retailer.html', context)
+    return redirect('/purchase_orders_retailer')
 
 @allowed_users(allowed_roles=['RETAILER'])
 def customer_cancel_retailer(request,order_id):
@@ -806,6 +823,7 @@ def prod_transfer_to_record_db_retailer(request):
                 delivery_date=order.delivery_date,
                 status=order.status,
                 totalamount=order.totalamount,
+                credit_period=order.credit_period,
                 order_status='in_cart',
                 order_id=greatest_order_id,  # Generate a new UUID for the order_id field
             )
@@ -827,7 +845,7 @@ def prod_transfer_to_record_db_retailer(request):
             sum_canceled_total_amount= sum_canceled_total_amount+order.totalamount
     
     context = {'orders': orders,'sum_pending_total_amount':sum_pending_total_amount,'sum_completed_total_amount':sum_completed_total_amount,'sum_canceled_total_amount':sum_canceled_total_amount}
-    return render(request, 'manu_placed_order_retailer.html', context)
+    return redirect('/manu_purchase_orders_retailer')
 
 @allowed_users(allowed_roles=['RETAILER'])
 def manu_customer_cancel_retailer(request,order_id):
@@ -904,7 +922,8 @@ def add_products_to_cart(request):
             supplier=supplier,
             product=product,
             quantity=quantity,
-            totalamount=total_amount
+            totalamount=total_amount,
+            credit_period=product.credit_period,
         )
 
     # Return a JSON response with the order details.

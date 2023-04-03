@@ -24,7 +24,7 @@ class CreateUserForm(UserCreationForm):
 class SupplierProductForm(forms.ModelForm):
     class Meta:
         model = SupplierProduct
-        fields = ['name', 'price', 'quality', 'quantity', 'type', 'is_available']
+        fields = ['name', 'price', 'quality','credit_period', 'quantity', 'type', 'is_available']
         labels = {
             'name': 'Name',
             'price': 'Price',
@@ -32,12 +32,13 @@ class SupplierProductForm(forms.ModelForm):
             'quantity': 'Quantity',
             'type': 'Type',
             'is_available': 'Is Available',
+            'credit_period':'credit_period'
         }
 
 class ManufacturerProductForm(forms.ModelForm):
     class Meta:
         model = ManufacturerProduct
-        fields = ['name', 'price', 'quality', 'quantity', 'type', 'is_available']
+        fields = ['name', 'price', 'quality', 'quantity', 'type', 'is_available','credit_period']
         labels = {
             'name': 'Name',
             'price': 'Price',
@@ -45,5 +46,6 @@ class ManufacturerProductForm(forms.ModelForm):
             'quantity': 'Quantity',
             'type': 'Type',
             'is_available': 'Is Available',
+            'credit_period':'credit_period'
         }
 
