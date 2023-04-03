@@ -531,6 +531,19 @@ def manu_order_details(request, order_id):
 
     return render(request, 'manu_order_details.html', context)
 
+def store_rating(request,order_id):
+    order = get_object_or_404(SupplierOrderRecord, id=order_id)
+
+    if request.method == 'POST':
+        rating = request.POST.get('rating')
+        if rating:
+            order.rating = rating
+            order.save()
+            messages.success(request, 'Rating saved successfully!')
+            return redirect('/purchase_orders')
+
+    context = {'order': order}
+    return redirect('/purchase_orders',context)
 
 # Retailer
 
@@ -764,6 +777,20 @@ def purchase_orders_retailer(request):
     context = {'orders': orders,'sum_pending_total_amount':sum_pending_total_amount,'sum_completed_total_amount':sum_completed_total_amount,'sum_canceled_total_amount':sum_canceled_total_amount}
     return render(request, 'placed_order_retailer.html', context)
 
+def store_rating_retailer(request,order_id):
+    order = get_object_or_404(SupplierOrderRecord, id=order_id)
+
+    if request.method == 'POST':
+        rating = request.POST.get('rating')
+        if rating:
+            order.rating = rating
+            order.save()
+            messages.success(request, 'Rating saved successfully!')
+            return redirect('/purchase_orders_retailer')
+
+    context = {'order': order}
+    return redirect('/purchase_orders_retailer',context)
+
 
 #ordering prodcuts for retailer
 @allowed_users(allowed_roles=['RETAILER'])
@@ -892,6 +919,20 @@ def manu_purchase_orders_retailer(request):
     
     context = {'orders': orders,'sum_pending_total_amount':sum_pending_total_amount,'sum_completed_total_amount':sum_completed_total_amount,'sum_canceled_total_amount':sum_canceled_total_amount}
     return render(request, 'manu_placed_order_retailer.html', context)
+
+def manu_store_rating_retailer(request,order_id):
+    order = get_object_or_404(ManufacturerOrderRecord, id=order_id)
+
+    if request.method == 'POST':
+        rating = request.POST.get('rating')
+        if rating:
+            order.rating = rating
+            order.save()
+            messages.success(request, 'Rating saved successfully!')
+            return redirect('/manu_purchase_orders_retailer')
+
+    context = {'order': order}
+    return redirect('/manu_purchase_orders_retailer',context)
 
 @allowed_users(allowed_roles=['RETAILER'])
 def add_products_to_cart(request):

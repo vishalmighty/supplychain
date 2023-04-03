@@ -73,12 +73,25 @@
                       <p class="card-text">Quantity: {{ order.quantity }}</p>
                       <p class="card-text">Price: Rs: {{ order.totalamount }}</p>
                       <p class="card-text">Status: {{ order.status }}</p>
-                      {% if order.status == "Pending" %}
-                      <form action="{% url 'customer_cancel_retailer' order.id %}" method="POST">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-danger btn-sm" name="customer_cancel">Cancel Item</button>
+                      {% if order.rating is null %}
+                        {% if order.status != 'Pending' %}
+                      <form action="{% url 'store_rating_retailer' order.id %}" method="POST">
+                          {% csrf_token %}
+                          <div class="form-group">
+                              <label for="rating">Please rate this item (0.0-10.0):</label>
+                              <input type="number" step="0.1" min="0" max="10" name="rating" id="rating" required>
+                          </div>
+                          <button type="submit" class="btn btn-primary btn-sm" name="submit_rating">Submit Rating</button>
                       </form>
                       {% endif %}
+                      {% endif %}
+
+                  {% if order.status == "Pending" %}
+                      <form action="{% url 'customer_cancel' order.id %}" method="POST">
+                          {% csrf_token %}
+                          <button type="submit" class="btn btn-danger btn-sm" name="customer_cancel">Cancel Item</button>
+                      </form>
+                  {% endif %}
                     </div>
                   </div>
                 </div>

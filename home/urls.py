@@ -32,6 +32,8 @@ urlpatterns = [
     #see orders for my products
     path('all_manu_orders',views.all_manu_orders,name='all_manu_orders'),
     path('manu_order_details/<int:order_id>/',views.manu_order_details,name='manu_order_details'),
+    #storing rating
+    path('store_rating/<int:order_id>/', views.store_rating, name='store_rating'),
 
     #retailer
     path('retailer_home',views.retailer_home,name='retailer_home'),
@@ -53,6 +55,9 @@ urlpatterns = [
     path('prod_transfer_to_record_db_retailer', views.prod_transfer_to_record_db_retailer, name='prod_transfer_to_record_db_retailer'),
     path('manu_customer_cancel_retailer/<int:order_id>/', views.manu_customer_cancel_retailer, name='manu_customer_cancel_retailer'),
     path('manu_purchase_orders_retailer', views.manu_purchase_orders_retailer, name='manu_purchase_orders_retailer'),
+    #storing rating 
+    path('store_rating_retailer/<int:order_id>/', views.store_rating_retailer, name='store_rating_retailer'),
+    path('manu_store_rating_retailer/<int:order_id>/', views.manu_store_rating_retailer, name='manu_store_rating_retailer'),
    
     path('user_logout',views.user_logout,name='user_logout'),
     path('user_signup',views.user_signup,name='user_signup'),
