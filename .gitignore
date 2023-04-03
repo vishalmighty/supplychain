@@ -1,3 +1,4 @@
 /profile_pics/*
 /supplier_csv_files/*
 /manufacturer_csv_files/*
+env.py
