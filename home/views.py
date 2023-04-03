@@ -5,7 +5,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from .decorators import unauthenticateduser,allowed_users
 from django.contrib.auth.models import Group
-from .models import SupplierDetails,SupplierProduct,User,SupplierOrder,SupplierOrderRecord,ManufacturerProduct,ManufacturerOrder,ManufacturerOrderRecord
+from .models import SupplierDetails,SupplierProduct,User,SupplierOrder,SupplierOrderRecord,ManufacturerProduct,ManufacturerOrder,ManufacturerOrderRecord,ProductAlert
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib import messages
 from itertools import chain
@@ -530,6 +530,24 @@ def manu_order_details(request, order_id):
     }
 
     return render(request, 'manu_order_details.html', context)
+
+@allowed_users(allowed_roles=['MANUFACTURER'])
+def alerts(request,product_id):
+    product = ManufacturerProduct.objects.get(id=product_id)
+    if request.method == 'POST':
+        alert_below = request.POST.get('alert_below')
+        ProductAlert.objects.create(product=product, alert_count=alert_below)
+        return redirect('/manufacturer_product')
+    quantity = product.quantity
+    context = {'quantity': quantity}
+    return render(request, 'alerts.html', context)
+
+@allowed_users(allowed_roles=['MANUFACTURER'])
+def delete_alerts(request,product_id):
+    product = ManufacturerProduct.objects.get(id=product_id)
+    alert = ProductAlert.objects.get(product=product)
+    alert.delete()
+    return redirect('/manufacturer_product')
 
 def store_rating(request,order_id):
     order = get_object_or_404(SupplierOrderRecord, id=order_id)

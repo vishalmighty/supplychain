@@ -32,6 +32,9 @@ urlpatterns = [
     #see orders for my products
     path('all_manu_orders',views.all_manu_orders,name='all_manu_orders'),
     path('manu_order_details/<int:order_id>/',views.manu_order_details,name='manu_order_details'),
+    #alerts
+    path('alerts/<int:product_id>/',views.alerts,name='alerts'),
+    path('delete_alerts/<int:product_id>/',views.delete_alerts,name='delete_alerts'),
     #storing rating
     path('store_rating/<int:order_id>/', views.store_rating, name='store_rating'),
 

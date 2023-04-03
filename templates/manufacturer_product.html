@@ -67,6 +67,10 @@
                         <p class="card-text text-danger">Not available</p>
                     {% endif %}
                 </div>
+                <div class="card-footer">
+                  <a href="{% url 'alerts' product.id %}" class="fas fa-bell">Set alert</a>
+                  <a href="{% url 'delete_alerts' product.id %}" class="btn btn-danger">Remove alert</a>
+                </div>
             </div>  
             </div>            
             {% endfor %}

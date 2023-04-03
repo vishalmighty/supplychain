@@ -196,3 +196,7 @@ class ManufacturerOrderRecord(models.Model):
     order_status = models.CharField(max_length=20, choices=ORDER_STATUS_CHOICES, default='in_cart')
     def __str__(self):
         return f"{self.product.name} ordered by {self.id}"
+
+class ProductAlert(models.Model):
+    product = models.ForeignKey(ManufacturerProduct, on_delete=models.CASCADE, related_name='alerts')
+    alert_count = models.IntegerField(default=0)

@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
-from .models import User,SupplierDetails,SupplierProduct,SupplierOrder,SupplierOrderRecord,ManufacturerProduct,ManufacturerOrder,ManufacturerOrderRecord
+from .models import User,SupplierDetails,SupplierProduct,SupplierOrder,SupplierOrderRecord,ManufacturerProduct,ManufacturerOrder,ManufacturerOrderRecord,ProductAlert
 
 class CustomUserCreationForm(UserCreationForm):
     class Meta:
@@ -53,3 +53,4 @@ admin.site.register(SupplierOrderRecord)
 admin.site.register(ManufacturerProduct,ManufacturerProductAdmin)
 admin.site.register(ManufacturerOrder)
 admin.site.register(ManufacturerOrderRecord)
+admin.site.register(ProductAlert)
